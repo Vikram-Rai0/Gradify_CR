@@ -1,0 +1,27 @@
+/src
+├── /api                  # External API calls
+├── /assets               # Images, logos, etc.
+├── /components           # UI components
+│   ├── /Button
+│   ├── /Header
+│   └── /Modal
+├── /constants            # Constant values (e.g., config, colors, etc.)
+├── /context              # Global context state management
+├── /features             # Feature-specific logic
+│   ├── /auth
+│   └── /dashboard
+├── /hooks                # Custom hooks
+├── /layouts              # Layout components (e.g., Header, Sidebar)
+├── /pages                # Pages corresponding to routes
+│   ├── /Home
+│   ├── /Login
+│   └── /Dashboard
+├── /redux                # If using Redux for state management
+│   ├── /actions
+│   ├── /reducers
+│   └── /store
+├── /services             # API or external service handling
+├── /styles               # Global styles or theme
+├── /utils                # Utility functions
+├── App.js                # Main app component
+└── index.js              # Entry point of the app
