@@ -5,35 +5,35 @@ import Calander from '../pages/Calender';
 import Teaching from '../pages/Teaching';
 import Settings from '../pages/Settings';
 import Layout from '../layouts/SidebarLayout';
-import ClassNav from '../pages/ClassNav';
-import Stream from '../pages/Stream';
 import ClassLayout from '../layouts/ClassLayout';
+import Stream from '../pages/Stream';
+import Classwork from '../pages/Classwork';
+import People from '../pages/People';
+
 
 const AppRoutes = () => {
     return (
-        <div>
-            <Routes>
-                <Route element={<Layout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/classNav" element={<ClassNav />} />
-                    <Route path="/calender" element={<Calander />} />
-                    <Route path="/teaching" element={<Teaching />} />
-                    <Route path="/settings" element={<Settings />} />
+        <Routes>
+            <Route element={<Layout />}>
+
+                <Route path="/" element={<Home />} />
+                <Route path="/calender" element={<Calander />} />
+                <Route path="/teaching" element={<Teaching />} />
+                <Route path="/settings" element={<Settings />} />
+
+                <Route path="/classNav" element={<ClassLayout />}>
+
+                    <Route index element={<Stream />} /> {/* Default route */}
+                    <Route path="stream" element={<Stream />} />
+                    <Route path="/classNav/classwork" element={<Classwork />} />
+                    <Route path="/classNav/people" element={<People />} />
+
                 </Route>
+            </Route>
 
 
-
-                <Route element={<ClassLayout />}>
-                    {/* <Route path="/classNav" element={<ClassNav />} /> */}
-                    <Route path="/stream" element={<Stream />} />
-
-                </Route>
-
-
-            </Routes>
-        </div>
+        </Routes>
     )
 }
 
 export default AppRoutes;
-
