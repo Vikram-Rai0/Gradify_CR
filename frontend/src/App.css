@@ -1,0 +1,6 @@
+/* ContentEditable placeholder */
+[contenteditable][placeholder]:empty:before {
+  content: attr(placeholder);
+  color: #999;
+  cursor: text;
+}

@@ -28,6 +28,7 @@ const AppRoutes = () => {
                     <Route path="/classNav/classwork" element={<Classwork />} />
                     <Route path="/classNav/people" element={<People />} />
 
+
                 </Route>
             </Route>
 
