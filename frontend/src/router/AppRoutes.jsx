@@ -9,12 +9,25 @@ import ClassLayout from '../layouts/ClassLayout';
 import Stream from '../pages/Stream';
 import Classwork from '../pages/Classwork';
 import People from '../pages/People';
+import Topic from '../pages/classwork/Topic';
+import Quiz_assignment from '../pages/classwork/Quiz_assignment';
+import ReusePost from '../pages/classwork/ReusePost';
+import Question from '../pages/classwork/Question';
+import Material from '../pages/classwork/Material';
+import Assignment from '../pages/classwork/Assignment';
+import CreateMenu from '../pages/Classwork';
+import ClassWorkLayout from '../layouts/ClassWorkLayout';
+
+
 
 
 const AppRoutes = () => {
     return (
         <Routes>
             <Route element={<Layout />}>
+                {/* <Route>
+
+            </Route> */}
 
                 <Route path="/" element={<Home />} />
                 <Route path="/calender" element={<Calander />} />
@@ -27,12 +40,18 @@ const AppRoutes = () => {
                     <Route path="stream" element={<Stream />} />
                     <Route path="/classNav/classwork" element={<Classwork />} />
                     <Route path="/classNav/people" element={<People />} />
-
-
                 </Route>
             </Route>
 
+            <Route element={<ClassWorkLayout />}>
+                <Route path="assignment" element={<Assignment />} />
+                <Route path="quiz" element={<Quiz_assignment />} />
+                <Route path="question" element={<Question />} />
+                <Route path="/material" element={<Material />} />
+                <Route path="reuse_post" element={<ReusePost />} />
+                <Route path="topic" element={<Topic />} />
 
+            </Route>
         </Routes>
     )
 }
