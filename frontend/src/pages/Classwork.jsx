@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function CreateMenu() {
 
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
   const navigate = useNavigate();
+  const { classId } = useParams();
   const menuItems = [
-    { label: "Assignment", icon: "📋", path: "/assignment" },
+    { label: "Assignment", icon: "📋", path: "assignment" },
     { label: "Quiz assignment", icon: "📝", path: "quiz" },
     { label: "Question", icon: "❓", path: "question" },
     { label: "Material", icon: "📄", path: "material" },
@@ -64,7 +66,8 @@ export default function CreateMenu() {
                 key={item.label}
                 onClick={() => {
                   setOpen(false);
-                  navigate(item.path); // 🔁 Navigate to the right page
+                  navigate(`/class/${classId}/classwork/${item.path}`);
+                  // navigate(item.path); // 🔁 Navigate to the right page
                 }}
                 className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 role="menuitem"

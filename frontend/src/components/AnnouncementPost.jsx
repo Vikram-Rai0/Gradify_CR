@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import React, { useRef, forwardRef, useImperativeHandle } from "react";
 import {
   FaBold,
   FaItalic,
@@ -11,30 +11,31 @@ import {
   FaStrikethrough,
 } from "react-icons/fa";
 
-export default function ClassroomPost({ onNewPost, closeEditor }) {
+const AnnouncementPost = forwardRef(({ onNewPost, closeEditor, editorOnly = false, hideFooterButtons = false }, ref) => {
   const editorRef = useRef(null);
 
+  useImperativeHandle(ref, () => ({
+    getContent: () => editorRef.current?.innerHTML || "",
+  }));
+
   const handlePost = () => {
-    if (!editorRef.current) return;
+    const htmlContent = editorRef.current?.innerHTML;
+    const plainText = editorRef.current?.innerText;
 
-    const htmlContent = editorRef.current.innerHTML;
-    const plainText = editorRef.current.innerText;
-
-    if (plainText.trim() === "") return;
+    if (!plainText.trim()) return;
 
     const newPost = {
       id: Date.now(),
       author: "Code Work",
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       content: htmlContent,
     };
-
 
     if (typeof onNewPost === "function") {
       onNewPost(newPost);
       editorRef.current.innerHTML = "";
-      closeEditor();
+      closeEditor?.();
     } else {
       console.error("onNewPost is NOT a function!", onNewPost);
     }
@@ -42,7 +43,7 @@ export default function ClassroomPost({ onNewPost, closeEditor }) {
 
   const formatText = (command) => {
     document.execCommand(command, false, null);
-    editorRef.current.focus();
+    editorRef.current?.focus();
   };
 
   return (
@@ -69,31 +70,38 @@ export default function ClassroomPost({ onNewPost, closeEditor }) {
         placeholder="Announce something to your class"
       ></div>
 
-      <div className="flex justify-between items-center">
-        <div className="flex gap-4 text-gray-600">
-          <button><FaBullhorn /></button>
-          <button><FaYoutube /></button>
-          <label className="cursor-pointer flex items-center gap-1">
-            <input type="file" className="hidden" />
-            <FaUpload />
-          </label>
-          <button><FaLink /></button>
+      {!editorOnly && (
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4 text-gray-600">
+            <button><FaBullhorn /></button>
+            <button><FaYoutube /></button>
+            <label className="cursor-pointer flex items-center gap-1">
+              <input type="file" className="hidden" />
+              <FaUpload />
+            </label>
+            <button><FaLink /></button>
+          </div>
+
+          {!hideFooterButtons && (
+            <div className="flex gap-2">
+              <button
+                onClick={closeEditor}
+                className="text-red-600 border border-red-500 px-4 py-1 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePost}
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Post
+              </button>
+            </div>
+          )}
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={closeEditor}
-            className="text-red-600 border border-red-500 px-4 py-1 rounded"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handlePost}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            Post
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
-}
+});
+
+export default AnnouncementPost;

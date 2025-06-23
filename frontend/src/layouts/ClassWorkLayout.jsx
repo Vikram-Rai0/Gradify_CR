@@ -1,22 +1,14 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import ClassWorkNav from '../components/classwork/CalssWorkNav'
-import ClassWorkSidebar from '../components/ClassWorkSidebar'
+// layouts/ClassWorkLayout.jsx
+import React from "react";
+import { Outlet } from "react-router-dom";
 
 const ClassWorkLayout = () => {
-    return (
-        <div>
-            <div className='flex flex-col w-full'>
-                <ClassWorkNav />
-            </div>
-            <div className='flex '>
-                <ClassWorkSidebar />
-                <main>
-                    <Outlet />
-                </main>
-            </div>
-        </div>
-    )
-}
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Classwork Section</h1>
+      <Outlet />
+    </div>
+  );
+};
 
-export default ClassWorkLayout
+export default ClassWorkLayout;

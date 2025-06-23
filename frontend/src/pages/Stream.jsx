@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ClassroomPost from '../components/ClassroomPost';
+import ClassroomPost from '../components/AnnouncementPost';
 
 const Stream = () => {
   const [isOpenAnnouncement, setIsOpenAnnouncement] = useState(false);

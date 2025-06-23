@@ -1,5 +1,5 @@
 import React from 'react'
-import ClassWorkSidebar from '../../components/ClassWorkSidebar'
+import ClassWorkSidebar from '../../components/classwork/ClassWorkSidebar'
 import ClassWorkNav from '../../components/classwork/CalssWorkNav'
 
 const Quiz_assignment = () => {
