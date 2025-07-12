@@ -18,6 +18,7 @@ import Question from '../pages/classwork/Question';
 import Material from '../pages/classwork/Material';
 import Assignment from '../pages/classwork/Assignment';
 import ClassWorkLayout from '../layouts/ClassWorkLayout';
+import SignUp from '../pages/SignUp';
 
 const AppRoutes = () => {
     return (
@@ -47,8 +48,10 @@ const AppRoutes = () => {
             <Route path="class/:classId/classwork/topic" element={<Topic />} />
 
 
+            <Route path='signup' element={<SignUp />} />
 
         </Routes>
+
     )
 }
 
