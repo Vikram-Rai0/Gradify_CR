@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom"
 import { CiUser, CiVoicemail, CiUnlock } from "react-icons/ci";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import axios from "axios";
 
-const AuthForm = () => {
+const UserForm = () => {
+    const navigate = useNavigate();
+
     const [isSignUp, setIsSignUp] = useState(true);
     const [formdata, setFormData] = useState({
-        username: '',
+        name: '',
+        role: 'Student',
         email: '',
         password: '',
-        confirm: '',
-        role: 'Student'
+        confirm: ''
     });
     const [loading, setLoading] = useState(false);
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const handleChange = (e) => {
         setFormData((prev) => ({
@@ -25,6 +32,7 @@ const AuthForm = () => {
         setLoading(true);
 
         try {
+            // Signup Flow
             if (isSignUp) {
                 if (formdata.password !== formdata.confirm) {
                     alert("Passwords do not match!");
@@ -32,21 +40,41 @@ const AuthForm = () => {
                     return;
                 }
 
-                const res = await axios.post("http://localhost:5000/signup", {
-                    username: formdata.username,
+                if (formdata.password.length < 6) {
+                    alert("Password must be at least 6 characters.");
+                    setLoading(false);
+                    return;
+                }
+
+                // Optional: enforce only 'Student' role at signup
+                const roleToSend = formdata.role !== 'Student' ? 'Student' : formdata.role;
+
+                const res = await axios.post("http://localhost:5000/api/user/signup", {
+                    name: formdata.name,
                     email: formdata.email,
                     password: formdata.password,
-                    role: formdata.role
+                    role: roleToSend
+                    // No 'verified' property
                 });
+
                 alert("Signup successful!");
                 console.log(res.data);
-            } else {
-                const res = await axios.post("http://localhost:5000/login", {
+                setIsSignUp(false);
+            }
+            // Login Flow
+            else {
+                const res = await axios.post("http://localhost:5000/api/user/login", {
                     email: formdata.email,
                     password: formdata.password
                 });
                 alert("Login successful!");
                 console.log(res.data);
+                // Store token (optional)
+                localStorage.setItem("token", res.data.token);
+
+                // Redirect to home page
+                navigate("/");
+
             }
         } catch (err) {
             console.error(err);
@@ -60,7 +88,7 @@ const AuthForm = () => {
         <div className="flex justify-center items-center h-screen bg-gray-100 px-4">
             <div className="flex rounded-xl w-[800px] h-[500px] bg-white shadow-lg overflow-hidden">
 
-                {/* Background */}
+                {/* Background image */}
                 <div className="w-[45%] hidden md:block">
                     <img
                         src="/signupBackground.png"
@@ -85,8 +113,8 @@ const AuthForm = () => {
                                     <CiUser className="absolute left-2 top-1/2 -translate-y-1/2 text-green-500" />
                                     <input
                                         type="text"
-                                        name="username"
-                                        value={formdata.username}
+                                        name="name"
+                                        value={formdata.name}
                                         onChange={handleChange}
                                         placeholder="Username"
                                         className="w-full pl-8 py-2 border-b border-gray-400 focus:outline-none"
@@ -103,9 +131,9 @@ const AuthForm = () => {
                                         className="w-full pl-16 py-2 border-b border-gray-400 focus:outline-none text-gray-700"
                                         required
                                     >
-                                        <option value="Instructor">Instructor</option>
-                                        <option value="Teacher">Teacher</option>
                                         <option value="Student">Student</option>
+                                        <option value="Teacher">Teacher</option>
+                                        <option value="Instructor">Instructor</option>
                                     </select>
                                 </div>
                             </>
@@ -127,7 +155,7 @@ const AuthForm = () => {
                         <div className="relative w-[80%]">
                             <CiUnlock className="absolute left-2 top-1/2 -translate-y-1/2 text-green-500" />
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 name="password"
                                 value={formdata.password}
                                 onChange={handleChange}
@@ -135,13 +163,19 @@ const AuthForm = () => {
                                 className="w-full pl-8 py-2 border-b border-gray-400 focus:outline-none"
                                 required
                             />
+                            <span
+                                className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                            </span>
                         </div>
 
                         {isSignUp && (
                             <div className="relative w-[80%]">
                                 <CiUnlock className="absolute left-2 top-1/2 -translate-y-1/2 text-green-500" />
                                 <input
-                                    type="password"
+                                    type={showConfirm ? "text" : "password"}
                                     name="confirm"
                                     value={formdata.confirm}
                                     onChange={handleChange}
@@ -149,6 +183,12 @@ const AuthForm = () => {
                                     className="w-full pl-8 py-2 border-b border-gray-400 focus:outline-none"
                                     required
                                 />
+                                <span
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+                                    onClick={() => setShowConfirm(!showConfirm)}
+                                >
+                                    {showConfirm ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                                </span>
                             </div>
                         )}
 
@@ -179,4 +219,4 @@ const AuthForm = () => {
     );
 };
 
-export default AuthForm;
+export default UserForm;
