@@ -73,7 +73,7 @@ const UserForm = () => {
                 localStorage.setItem("token", res.data.token);
 
                 // Redirect to home page
-                navigate("/");
+                navigate("/home");
 
             }
         } catch (err) {

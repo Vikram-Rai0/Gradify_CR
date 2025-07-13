@@ -19,12 +19,15 @@ import Material from '../pages/classwork/Material';
 import Assignment from '../pages/classwork/Assignment';
 import ClassWorkLayout from '../layouts/ClassWorkLayout';
 import UserForm from '../pages/UserForm';
+import FirstPage from '../pages/Firstpage';
 const AppRoutes = () => {
     return (
         <Routes>
+            <Route path="/" element={<FirstPage />} />
             <Route element={<Layout />}>
+
                 {/* Main Routes */}
-                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
                 <Route path="/calender" element={<Calander />} />
                 <Route path="/teaching" element={<Teaching />} />
                 <Route path="/settings" element={<Settings />} />
@@ -47,7 +50,7 @@ const AppRoutes = () => {
             <Route path="class/:classId/classwork/topic" element={<Topic />} />
 
 
-            <Route path='signup' element={<UserForm />} />
+            <Route path='/signup' element={<UserForm />} />
 
         </Routes>
 
