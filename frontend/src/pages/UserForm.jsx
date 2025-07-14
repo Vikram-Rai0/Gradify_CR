@@ -4,6 +4,7 @@ import { CiUser, CiVoicemail, CiUnlock } from "react-icons/ci";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import axios from "axios";
 
+
 const UserForm = () => {
     const navigate = useNavigate();
 
@@ -53,9 +54,10 @@ const UserForm = () => {
                     name: formdata.name,
                     email: formdata.email,
                     password: formdata.password,
-                    role: roleToSend
+                    role: roleToSend,
+
                     // No 'verified' property
-                });
+                }, { withCredentials: true });
 
                 alert("Signup successful!");
                 console.log(res.data);
@@ -65,7 +67,10 @@ const UserForm = () => {
             else {
                 const res = await axios.post("http://localhost:5000/api/user/login", {
                     email: formdata.email,
-                    password: formdata.password
+                    password: formdata.password,
+
+                }, {
+                    withCredentials: true
                 });
                 alert("Login successful!");
                 console.log(res.data);
