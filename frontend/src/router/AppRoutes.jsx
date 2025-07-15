@@ -20,10 +20,14 @@ import Assignment from '../pages/classwork/Assignment';
 import ClassWorkLayout from '../layouts/ClassWorkLayout';
 import UserForm from '../pages/UserForm';
 import FirstPage from '../pages/Firstpage';
+import ForgotPassword from "./pages/ForgotPassword";
+
 const AppRoutes = () => {
     return (
         <Routes>
             <Route path="/" element={<FirstPage />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+
             <Route element={<Layout />}>
 
                 {/* Main Routes */}
