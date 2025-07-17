@@ -19,13 +19,14 @@ import Material from '../pages/classwork/Material';
 import Assignment from '../pages/classwork/Assignment';
 import ClassWorkLayout from '../layouts/ClassWorkLayout';
 import UserForm from '../pages/UserForm';
-import FirstPage from '../pages/Firstpage';
-import ForgotPassword from "./pages/ForgotPassword";
-
+import HomePage from '../pages/HomePage';
+import ForgotPassword from '../pages/ForgetPassword';
 const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={<FirstPage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/signup" element={<UserForm />} />
+            <Route path="/login" element={<UserForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
             <Route element={<Layout />}>
@@ -44,7 +45,6 @@ const AppRoutes = () => {
                     <Route path="people" element={<People />} />
 
                 </Route>
-
             </Route>
             <Route path="class/:classId/classwork/assignment" element={<Assignment />} />
             <Route path="class/:classId/classwork/quiz" element={<Quiz_assignment />} />
@@ -54,7 +54,9 @@ const AppRoutes = () => {
             <Route path="class/:classId/classwork/topic" element={<Topic />} />
 
 
-            <Route path='/signup' element={<UserForm />} />
+
+
+
 
         </Routes>
 

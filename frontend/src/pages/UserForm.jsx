@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom"
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
 import { CiUser, CiVoicemail, CiUnlock } from "react-icons/ci";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import axios from "axios";
 
-
 const UserForm = () => {
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const [isSignUp, setIsSignUp] = useState(true);
+    // Determine initial mode based on current route
+    const [isSignUp, setIsSignUp] = useState(location.pathname === '/signup');
     const [formdata, setFormData] = useState({
         name: '',
         role: 'Student',
@@ -17,9 +18,13 @@ const UserForm = () => {
         confirm: ''
     });
     const [loading, setLoading] = useState(false);
-
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+
+    // Sync form mode with route changes
+    useEffect(() => {
+        setIsSignUp(location.pathname === '/signup');
+    }, [location.pathname]);
 
     const handleChange = (e) => {
         setFormData((prev) => ({
@@ -33,8 +38,8 @@ const UserForm = () => {
         setLoading(true);
 
         try {
-            // Signup Flow
             if (isSignUp) {
+                // Signup logic
                 if (formdata.password !== formdata.confirm) {
                     alert("Passwords do not match!");
                     setLoading(false);
@@ -47,39 +52,28 @@ const UserForm = () => {
                     return;
                 }
 
-                // Optional: enforce only 'Student' role at signup
-                const roleToSend = formdata.role !== 'Student' ? 'Student' : formdata.role;
-
                 const res = await axios.post("http://localhost:5000/api/user/signup", {
                     name: formdata.name,
                     email: formdata.email,
                     password: formdata.password,
-                    role: roleToSend,
-
-                    // No 'verified' property
+                    role: formdata.role,
                 }, { withCredentials: true });
 
                 alert("Signup successful!");
                 console.log(res.data);
-                setIsSignUp(false);
-            }
-            // Login Flow
-            else {
+
+                // Switch to login form after successful signup
+                navigate("/login");
+            } else {
+                // Login logic
                 const res = await axios.post("http://localhost:5000/api/user/login", {
                     email: formdata.email,
                     password: formdata.password,
+                }, { withCredentials: true });
 
-                }, {
-                    withCredentials: true
-                });
                 alert("Login successful!");
-                console.log(res.data);
-                // Store token (optional)
                 localStorage.setItem("token", res.data.token);
-
-                // Redirect to home page
                 navigate("/home");
-
             }
         } catch (err) {
             console.error(err);
@@ -89,11 +83,15 @@ const UserForm = () => {
         }
     };
 
+    // Toggle between signup/login forms
+    const handleFormToggle = () => {
+        const newPath = isSignUp ? "/login" : "/signup";
+        navigate(newPath);
+    };
+
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100 px-4">
             <div className="flex rounded-xl w-[800px] h-[500px] bg-white shadow-lg overflow-hidden">
-
-                {/* Background image */}
                 <div className="w-[45%] hidden md:block">
                     <img
                         src="/signupBackground.png"
@@ -102,7 +100,6 @@ const UserForm = () => {
                     />
                 </div>
 
-                {/* Form */}
                 <div className="w-full md:w-[55%] flex justify-center items-center p-6">
                     <form
                         onSubmit={handleSubmit}
@@ -212,7 +209,7 @@ const UserForm = () => {
                             <button
                                 type="button"
                                 className="text-blue-600 underline ml-1 hover:text-blue-800"
-                                onClick={() => setIsSignUp(!isSignUp)}
+                                onClick={handleFormToggle}
                             >
                                 {isSignUp ? "Login" : "Sign Up"}
                             </button>
