@@ -21,6 +21,7 @@ import ClassWorkLayout from '../layouts/ClassWorkLayout';
 import UserForm from '../pages/UserForm';
 import HomePage from '../pages/HomePage';
 import ForgotPassword from '../pages/ForgetPassword';
+import CreateClass from '../pages/CreateClass';
 const AppRoutes = () => {
     return (
         <Routes>
@@ -28,6 +29,8 @@ const AppRoutes = () => {
             <Route path="/signup" element={<UserForm />} />
             <Route path="/login" element={<UserForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+
+            <Route path="/create" element={<CreateClass />} />
 
             <Route element={<Layout />}>
 
