@@ -1,25 +1,20 @@
-// routes/userRoutes.js
 import express from "express";
 import {
-  deleteUser,
-  updateUser,
-  selectUser,
-  selectAllUser,
-  userLogin,
+  getAllUsers,
   userSignup,
+  userLogin,
+  selectUser,
+  updateUser,
+  deleteUser,
 } from "../controllers/userControllers.js";
 
 const router = express.Router();
 
+router.get("/", getAllUsers);
 router.post("/signup", userSignup);
-router.post("/login", userLogin);
-
-// Define GET and POST routes
-router.get("/", selectAllUser);
+router.post("/login", userLogin); 
 router.get("/:user_id", selectUser);
-router.delete("/:user_id", deleteUser);
 router.put("/:user_id", updateUser);
-
-
+router.delete("/:user_id", deleteUser);
 
 export default router;
