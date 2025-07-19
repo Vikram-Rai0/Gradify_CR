@@ -3,13 +3,13 @@ import React from 'react'
 import { Routes, Route } from "react-router-dom";
 import Home from '../pages/Home';
 import Calander from '../pages/Calender';
-import ClassNav from '../pages/ClassNav';
+import ClassNav from '../pages/classroom/ClassNav';
 import Teaching from '../pages/Teaching';
 import Settings from '../pages/Settings';
 import Layout from '../layouts/SidebarLayout';
 import ClassLayout from '../layouts/ClassLayout';
 import Stream from '../pages/Stream';
-import Classwork from '../pages/Classwork';
+import Classwork from '../pages/classwork/Classwork';
 import People from '../pages/People';
 import Topic from '../pages/classwork/Topic';
 import Quiz_assignment from '../pages/classwork/Quiz_assignment';
@@ -18,10 +18,10 @@ import Question from '../pages/classwork/Question';
 import Material from '../pages/classwork/Material';
 import Assignment from '../pages/classwork/Assignment';
 import ClassWorkLayout from '../layouts/ClassWorkLayout';
-import UserForm from '../pages/UserForm';
+import UserForm from '../pages/userForm/UserForm';
 import HomePage from '../pages/HomePage';
-import ForgotPassword from '../pages/ForgetPassword';
-import CreateClass from '../pages/CreateClass';
+import ForgotPassword from '../pages/userForm/ForgetPassword';
+import CreateClass from '../pages/classroom/CreateClass';
 const AppRoutes = () => {
     return (
         <Routes>
@@ -55,11 +55,6 @@ const AppRoutes = () => {
             <Route path="class/:classId/classwork/material" element={<Material />} />
             <Route path="class/:classId/classwork/reuse_post" element={<ReusePost />} />
             <Route path="class/:classId/classwork/topic" element={<Topic />} />
-
-
-
-
-
 
         </Routes>
 

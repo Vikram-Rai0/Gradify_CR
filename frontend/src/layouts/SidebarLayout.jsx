@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { Outlet } from "react-router-dom";
-import ClassNav from "../pages/ClassNav";
+import ClassNav from"../pages/classroom/ClassNav"
 
 const Layout = () => {
   const [isSidebarLocked, setIsSidebarLocked] = useState(false);

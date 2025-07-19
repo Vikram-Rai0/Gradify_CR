@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import ClassNav from '../pages/ClassNav'
+import ClassNav from '../pages/classroom/ClassNav'
 
 const ClassLayout = () => {
     return (

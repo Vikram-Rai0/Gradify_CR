@@ -94,7 +94,7 @@ const UserForm = () => {
             <div className="flex rounded-xl w-[800px] h-[500px] bg-white shadow-lg overflow-hidden">
                 <div className="w-[45%] hidden md:block">
                     <img
-                        src="/signupBackground.png"
+                        src="../signupBackground.png"
                         alt="signup"
                         className="h-full w-full object-cover rounded-l-2xl"
                     />

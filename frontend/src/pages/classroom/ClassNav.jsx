@@ -16,4 +16,4 @@ const ClassNav = () => {
   )
 }
 
-export default ClassNav
+export default ClassNav;

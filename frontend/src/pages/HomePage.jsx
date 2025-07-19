@@ -8,7 +8,7 @@ const HomePage = () => {
         if (value) {
             navigate(`/${value}`);
         }
-    };
+    };  
     return (
         <div>
             {/* <button value={'login'} onClick={handleButtonClicked} className='border-2 rounded-md'>Login</button> */}
