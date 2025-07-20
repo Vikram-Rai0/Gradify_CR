@@ -1,7 +1,8 @@
 import express from "express";
 const classRoomRouter = express.Router();
-import { createroom } from "../controllers/createClassroom.js";
+import { createroom, getClassroom } from "../controllers/createClassroom.js";
 
 classRoomRouter.post("/createclass", createroom);
+classRoomRouter.get("/getclassroom", getClassroom);
 
 export default classRoomRouter;
