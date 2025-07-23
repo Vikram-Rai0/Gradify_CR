@@ -30,13 +30,13 @@ const GetClasses = () => {
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold mb-8 text-[#1B3C53]">All Classes</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-250">
                 {classes.map((cls, index) => {
                     const imgSrc = bannerImages[index % bannerImages.length];
                     return (
                         <div
                             key={cls.id || index}
-                            className="border border-gray-300 rounded-lg shadow-md bg-white overflow-hidden flex flex-col"
+                            className="border border-gray-300 rounded-lg shadow-md bg-white overflow-hidden flex flex-col hover:shadow-lg"
                         >
                             <h2 className="bg-gray-100 text-[#1B3C53] font-semibold text-xl px-5 py-3 border-b border-gray-300">
                                 {cls.class_name}
