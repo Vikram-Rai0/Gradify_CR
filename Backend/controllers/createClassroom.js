@@ -3,7 +3,7 @@ import express from "express";
 
 export const createroom = async (req, res) => {
   const { class_name, section, subject, semester, invite_code } = req.body;
-  if (!class_name || !section || !subject || !semester || !invite_code) {
+  if (!class_name  || !subject || !semester || !invite_code) {
     return res.status(400).json({ error: "All fields are required." });
   }
 
@@ -31,11 +31,11 @@ export const createroom = async (req, res) => {
 };
 
 export const getClassroom = async (req, res) => {
-    try {
-        const [rows] = await db.execute("SELECT * FROM classroom"); // MySQL example
-        res.json(rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Failed to fetch classrooms" });
-    }
+  try {
+    const [rows] = await db.execute("SELECT * FROM classroom"); // MySQL example
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch classrooms" });
+  }
 };
