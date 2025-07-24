@@ -52,7 +52,7 @@ const UserForm = () => {
                     return;
                 }
 
-                const res = await axios.post("http://localhost:5000/api/user/signup", {
+                const res = await axios.post("http://localhost:5000/api/signup", {
                     name: formdata.name,
                     email: formdata.email,
                     password: formdata.password,
@@ -66,7 +66,7 @@ const UserForm = () => {
                 navigate("/login");
             } else {
                 // Login logic
-                const res = await axios.post("http://localhost:5000/api/user/login", {
+                const res = await axios.post("http://localhost:5000/api/login", {
                     email: formdata.email,
                     password: formdata.password,
                 }, { withCredentials: true });

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const GetClasses = () => {
+    const navigate = useNavigate();
     const [classes, setClasses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -26,7 +28,9 @@ const GetClasses = () => {
 
     if (loading) return <p className="text-center mt-10">Loading classes...</p>;
     if (error) return <p className="text-center mt-10 text-red-600">Error: {error}</p>;
-
+    const handleClassClick = (classId) => {
+        navigate(`/class/${classId}`)
+    }
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold mb-8 text-[#1B3C53]">All Classes</h1>
@@ -37,6 +41,7 @@ const GetClasses = () => {
                         <div
                             key={cls.id || index}
                             className="border border-gray-300 rounded-lg shadow-md bg-white overflow-hidden flex flex-col hover:shadow-lg"
+                            onClick={handleClassClick}
                         >
                             <h2 className="bg-gray-100 text-[#1B3C53] font-semibold text-xl px-5 py-3 border-b border-gray-300">
                                 {cls.class_name}

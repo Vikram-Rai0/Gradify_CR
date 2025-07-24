@@ -3,6 +3,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useState,
+  useEffect,
 } from "react";
 import axios from "axios";
 import {
@@ -23,25 +24,47 @@ const AnnouncementPost = forwardRef(
     ref
   ) => {
     const editorRef = useRef(null);
-    const [selectedClassId, setSelectedClassId] = useState(""); // Class dropdown state
+    const [selectedClassId, setSelectedClassId] = useState("");
+    const [ userId, setUserId] = useState(null);
+    const [classList, setClassList] = useState([]);
 
-    // Expose getContent to parent
+    // Fetch user and classes
+    useEffect(() => {
+  axios
+    .get("http://localhost:5000/api/me", { withCredentials: true }) // send cookie
+    .then((res) => {
+      setUserId(res.data.user_id);
+      console.log("Current logged-in user ID from cookie:", res.data.user_id);
+    })
+    .catch((err) => {
+      console.error("Failed to fetch current user:", err);
+    });
+
+  axios
+    .get("http://localhost:5000/api/getClassroom")
+    .then((res) => setClassList(res.data))
+    .catch((err) => console.error("Failed to fetch class list", err));
+}, []);
+
+
+    // Expose method to parent
     useImperativeHandle(ref, () => ({
       getContent: () => editorRef.current?.innerHTML || "",
     }));
 
-    // Text formatting
     const formatText = (command) => {
       document.execCommand(command, false, null);
       editorRef.current?.focus();
     };
 
-    // Handle post submission
     const handlePost = async () => {
+       if (!userId) {
+    alert("User not logged in or user info not loaded yet.");
+    return;
+  }
       const htmlContent = editorRef.current?.innerHTML;
       const plainText = editorRef.current?.innerText;
 
-      // Validate input
       if (!plainText.trim() || !selectedClassId) {
         alert("Please select a class and write a message.");
         return;
@@ -49,7 +72,7 @@ const AnnouncementPost = forwardRef(
 
       const postData = {
         class_id: selectedClassId,
-        posted_by: "user123", // TODO: Replace with actual user ID
+        posted_by: userId,
         message: htmlContent,
       };
 
@@ -60,7 +83,6 @@ const AnnouncementPost = forwardRef(
         );
 
         if (response.status === 201 || response.status === 200) {
-          // Optional: response.data.insertId if returned
           onNewPost?.({
             ...postData,
             id: response.data.insertId || Date.now(),
@@ -71,7 +93,6 @@ const AnnouncementPost = forwardRef(
             }),
           });
 
-          // Reset editor
           editorRef.current.innerHTML = "";
           setSelectedClassId("");
           closeEditor?.();
@@ -93,8 +114,11 @@ const AnnouncementPost = forwardRef(
             onChange={(e) => setSelectedClassId(e.target.value)}
           >
             <option value="">Select class</option>
-            <option value="1">JS class</option>
-            <option value="2">React class</option>
+            {classList.map((cls) => (
+              <option key={cls.class_id} value={cls.class_id}>
+                {cls.class_name}
+              </option>
+            ))}
           </select>
           <button className="text-blue-600 underline">All students</button>
         </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import LogoutButton from './LogoutButton';
 
 import { FaBars } from "react-icons/fa6";
 import { SiGoogleclassroom } from "react-icons/si";
@@ -52,9 +53,14 @@ const Navbar = ({ toggleSidebar }) => {
             <div>
               <button onClick={toggleOpen} className='h-12 hover:bg-gray-200 w-full border-b border-gray-300'>Join class</button>
               <button onClick={toggleOpen} className='h-12 hover:bg-gray-200 w-full'>Create Class</button>
+
             </div>
+
           </div>
-        )}
+
+        )}\
+      <LogoutButton />
+
     </div>
 
 

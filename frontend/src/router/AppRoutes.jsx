@@ -19,7 +19,7 @@ import Material from '../pages/classwork/Material';
 import Assignment from '../pages/classwork/Assignment';
 import ClassWorkLayout from '../layouts/ClassWorkLayout';
 import UserForm from '../pages/userForm/UserForm';
-import HomePage from '../pages/HomePage';
+import HomePage from '../pages/FrontPage';
 import ForgotPassword from '../pages/userForm/ForgetPassword';
 import CreateClass from '../pages/classroom/CreateClass';
 const AppRoutes = () => {

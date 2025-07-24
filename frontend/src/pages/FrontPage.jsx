@@ -1,14 +1,14 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const HomePage = () => {
+const FrontPage = () => {
     const navigate = useNavigate();
     const handleButtonClicked = (e) => {
         const value = e.target.value;
         if (value) {
             navigate(`/${value}`);
         }
-    };  
+    };
     return (
         <div>
             {/* <button value={'login'} onClick={handleButtonClicked} className='border-2 rounded-md'>Login</button> */}
@@ -18,4 +18,4 @@ const HomePage = () => {
     )
 }
 
-export default HomePage;
+export default FrontPage;
