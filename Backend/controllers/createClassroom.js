@@ -30,6 +30,7 @@ export const createroom = async (req, res) => {
   }
 };
 
+
 export const getClassroom = async (req, res) => {
   try {
     const [rows] = await db.execute("SELECT * FROM classroom"); // MySQL example

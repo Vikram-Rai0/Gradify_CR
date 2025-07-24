@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import classRoomRouter from "./routes/classRoomRoutes.js";
-
+import announceRouter from "./routes/announcementRouter.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,7 +23,8 @@ app.get("/", (req, res) => {
 });
 
 // Mount user routes
-app.use("/api/user", userRoutes);
+app.use("/api", announceRouter);
+app.use("/api", userRoutes);
 app.use("/api", classRoomRouter);
 // app.use('/api/auth', authRoutes);
 
