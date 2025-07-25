@@ -21,7 +21,7 @@ const CreateClass = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:5000/api/createclass", data);
+            const res = await axios.post("http://localhost:5000/api/classroom/createclass", data);
             console.log("Class created: ", res.data);
             // Reset form
             setData({ class_name: "", subject: "", section: "", semester: "", invite_code: "" });

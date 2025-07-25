@@ -14,11 +14,13 @@ const GetClasses = () => {
     useEffect(() => {
         const fetchClasses = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/getclassroom');
+                const res = await axios.get('http://localhost:5000/api/classroom/getclassroom');
                 setClasses(res.data);
                 setLoading(false);
             } catch (err) {
-                setError(err.response?.data || err.message);
+
+                console.error("Error fetching classroom:", err.response?.data || err.message);
+                setError(err.response?.data?.message || "Something went wrong");
                 setLoading(false);
             }
         };
@@ -34,7 +36,7 @@ const GetClasses = () => {
     return (
         <div className="p-6 max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold mb-8 text-[#1B3C53]">All Classes</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-250">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-220 h-130">
                 {classes.map((cls, index) => {
                     const imgSrc = bannerImages[index % bannerImages.length];
                     return (
@@ -48,7 +50,7 @@ const GetClasses = () => {
                             </h2>
                             <div
                                 className="flex-grow bg-cover bg-center relative"
-                                style={{ backgroundImage: `url(${imgSrc})`, minHeight: '160px' }}
+                                style={{ backgroundImage: `url(${imgSrc})`, minHeight: '130px' }}
                             >
                                 <div className="absolute  inset-0 bg-opacity-30 flex items-center justify-center text-white font-semibold text-lg">
                                     User Profile

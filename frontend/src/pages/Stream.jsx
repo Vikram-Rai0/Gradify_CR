@@ -22,7 +22,7 @@ const Stream = () => {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/announcements');
+        const res = await axios.get('http://localhost:5000/api/announcement/announcements');
         const filtered = res.data.filter((a) => a.class_id == classId);
         const formatted = filtered.map((a) => ({
           id: a.announcement_id,

@@ -31,7 +31,7 @@ const AnnouncementPost = forwardRef(
     // Fetch user and classes
     useEffect(() => {
   axios
-    .get("http://localhost:5000/api/me", { withCredentials: true }) // send cookie
+    .get("http://localhost:5000/api/user/me", { withCredentials: true }) // send cookie
     .then((res) => {
       setUserId(res.data.user_id);
       console.log("Current logged-in user ID from cookie:", res.data.user_id);
@@ -41,7 +41,7 @@ const AnnouncementPost = forwardRef(
     });
 
   axios
-    .get("http://localhost:5000/api/getClassroom")
+    .get("http://localhost:5000/api/classroom/getClassroom")
     .then((res) => setClassList(res.data))
     .catch((err) => console.error("Failed to fetch class list", err));
 }, []);
@@ -78,7 +78,7 @@ const AnnouncementPost = forwardRef(
 
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/announcements",
+          "http://localhost:5000/api/announcement/announcements",
           postData
         );
 

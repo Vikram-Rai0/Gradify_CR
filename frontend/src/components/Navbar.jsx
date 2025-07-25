@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import LogoutButton from './LogoutButton';
 
 import { FaBars } from "react-icons/fa6";
 import { SiGoogleclassroom } from "react-icons/si";
 import { IoIosAdd } from "react-icons/io";
-
-
+import LogoutUser from './LogoutUser';
 const Navbar = ({ toggleSidebar }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -58,9 +56,8 @@ const Navbar = ({ toggleSidebar }) => {
 
           </div>
 
-        )}\
-      <LogoutButton />
-
+        )}
+      <LogoutUser />
     </div>
 
 
