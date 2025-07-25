@@ -20,31 +20,55 @@ import {
 
 const AnnouncementPost = forwardRef(
   (
-    { onNewPost, closeEditor, editorOnly = false, hideFooterButtons = false },
+    { onNewPost, closeEditor, editorOnly = false, hideFooterButtons = false, currentClassId = null },
     ref
   ) => {
     const editorRef = useRef(null);
-    const [selectedClassId, setSelectedClassId] = useState("");
-    const [ userId, setUserId] = useState(null);
+    const [selectedClassId, setSelectedClassId] = useState([]);
+    const [userId, setUserId] = useState(null);
     const [classList, setClassList] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
+    const [isEditorVisible, setIsEditorVisible] = useState(true);
+
 
     // Fetch user and classes
     useEffect(() => {
-  axios
-    .get("http://localhost:5000/api/user/me", { withCredentials: true }) // send cookie
-    .then((res) => {
-      setUserId(res.data.user_id);
-      console.log("Current logged-in user ID from cookie:", res.data.user_id);
-    })
-    .catch((err) => {
-      console.error("Failed to fetch current user:", err);
-    });
+      axios
+        .get("http://localhost:5000/api/user/me", { withCredentials: true }) // send cookie
+        .then((res) => {
+          setUserId(res.data.user_id);
+          console.log("Current logged-in user ID from cookie:", res.data.user_id);
+          if (currentClassId) {
+            setSelectedClassId([currentClassId]);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch current user:", err);
+        }, [[currentClassId]]);
+      axios
+        .get("http://localhost:5000/api/classroom/getClassroom")
+        .then((res) => setClassList(res.data))
+        .catch((err) => console.error("Failed to fetch class list", err));
+    }, []);
+    // NEW: Toggle class selection
+    const toggleClassSelection = (classId) => {
+      if (selectedClassId.includes(classId)) {
+        setSelectedClassId(selectedClassId.filter(id => id !== classId));
+      } else {
+        setSelectedClassId([...selectedClassId, classId]);
+      }
+    };
 
-  axios
-    .get("http://localhost:5000/api/classroom/getClassroom")
-    .then((res) => setClassList(res.data))
-    .catch((err) => console.error("Failed to fetch class list", err));
-}, []);
+    // NEW: Toggle select all classes
+    const toggleSelectAll = () => {
+      if (selectAll) {
+        setSelectedClassId([]);
+      } else {
+        setSelectedClassId(classList.map(cls => cls.class_id));
+      }
+      setSelectAll(!selectAll);
+    };
+
 
 
     // Expose method to parent
@@ -58,15 +82,15 @@ const AnnouncementPost = forwardRef(
     };
 
     const handlePost = async () => {
-       if (!userId) {
-    alert("User not logged in or user info not loaded yet.");
-    return;
-  }
+      if (!userId) {
+        alert("User not logged in or user info not loaded yet.");
+        return;
+      }
       const htmlContent = editorRef.current?.innerHTML;
       const plainText = editorRef.current?.innerText;
 
-      if (!plainText.trim() || !selectedClassId) {
-        alert("Please select a class and write a message.");
+      if (!plainText.trim() || selectedClassId.length === 0) { // UPDATED condition
+        alert("Please select at least one class and write a message.");
         return;
       }
 
@@ -77,51 +101,88 @@ const AnnouncementPost = forwardRef(
       };
 
       try {
-        const response = await axios.post(
-          "http://localhost:5000/api/announcement/announcements",
-          postData
+        // NEW: Create multiple posts for each selected class
+        const postPromises = selectedClassId.map(classId =>
+          axios.post(
+            "http://localhost:5000/api/announcement/announcements",
+            {
+              class_id: classId,
+              posted_by: userId,
+              message: htmlContent
+            }
+          )
         );
+        const responses = await Promise.all(postPromises)
+        responses.forEach((response, index) => {
 
-        if (response.status === 201 || response.status === 200) {
-          onNewPost?.({
-            ...postData,
-            id: response.data.insertId || Date.now(),
-            date: new Date().toLocaleDateString(),
-            time: new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          });
 
-          editorRef.current.innerHTML = "";
-          setSelectedClassId("");
-          closeEditor?.();
-        } else {
-          console.error("Failed to post announcement:", response.statusText);
-        }
+          if (response.status === 201 || response.status === 200) {
+            onNewPost?.({
+              ...postData,
+              id: response.data.insertId || Date.now(),
+              date: new Date().toLocaleDateString(),
+              time: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            });
+          }
+        });
+
+        editorRef.current.innerHTML = "";
+        setSelectedClassId("");
+        setIsEditorVisible(false);
+        closeEditor?.();
+
+
       } catch (error) {
         console.error("Error posting announcement:", error);
       }
     };
+    if (!isEditorVisible) {
+      return null;
+    }
 
     return (
       <div className="p-4 bg-white rounded shadow w-full max-w-3xl mx-auto mb-4">
         {/* Header: Class Selector + Audience */}
-        <div className="flex items-center gap-2 mb-4">
-          <select
-            className="border p-2 rounded"
-            value={selectedClassId}
-            onChange={(e) => setSelectedClassId(e.target.value)}
-          >
-            <option value="">Select class</option>
-            {classList.map((cls) => (
-              <option key={cls.class_id} value={cls.class_id}>
-                {cls.class_name}
-              </option>
-            ))}
-          </select>
-          <button className="text-blue-600 underline">All students</button>
-        </div>
+        <select name="" id="">
+          <div className="mb-4">
+            <option value="">
+              <div className="flex items-center gap-2 mb-2">
+
+                <label className="flex items-center gap-1 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={toggleSelectAll}
+                    className="h-4 w-4 text-blue-600 rounded"
+                  />
+                  <span className="font-medium">Select All Classes</span>
+                </label>
+
+              </div>
+            </option>
+            <option value="">
+              <div className="flex flex-wrap gap-3">
+                {classList.map((cls) => (
+                  <label
+                    key={cls.class_id}
+                    className="flex items-center gap-1 cursor-pointer bg-gray-50 px-3 py-1 rounded border border-gray-200"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedClassId.includes(cls.class_id)}
+                      onChange={() => toggleClassSelection(cls.class_id)}
+                      className="h-4 w-4 text-blue-600 rounded"
+                    />
+                    <span className="text-sm">{cls.class_name}</span>
+                  </label>
+                ))}
+              </div>
+            </option>
+          </div>
+        </select>
 
         {/* Toolbar */}
         <div className="flex gap-2 text-gray-600 mb-2">
@@ -194,6 +255,7 @@ const AnnouncementPost = forwardRef(
                 >
                   Cancel
                 </button>
+
                 <button
                   onClick={handlePost}
                   className="bg-blue-600 text-white px-4 py-2 rounded"
