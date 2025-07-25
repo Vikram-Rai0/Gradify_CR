@@ -200,7 +200,7 @@ export const deleteUser = async (req, res) => {
 
 // Logout
 
-// In your auth controller
+
 export const logoutUser = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,

@@ -25,9 +25,9 @@ app.get("/", (req, res) => {
 });
 
 // Mount user routes
-app.use("/api", announceRouter);
 app.use("/api/user", userRoutes);
-app.use("/api", classRoomRouter);
+app.use("/api/announcement", announceRouter);
+app.use("/api/classroom", classRoomRouter);
 // app.use('/api/auth', authRoutes);
 // Start server
 app.listen(PORT, () => {
