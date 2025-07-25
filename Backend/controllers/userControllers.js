@@ -1,6 +1,7 @@
 import db from "../config/db.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import cookieParser from 'cookie-parser';
 
 // ======================== Signup ========================
 export const userSignup = async (req, res) => {
@@ -27,11 +28,10 @@ export const userSignup = async (req, res) => {
       "INSERT INTO user (name, email, role, password_hash, verified) VALUES (?, ?, ?, ?, ?)",
       [name, email, role, password_hash, 0]
     );
+    const userId = result.user_id;
+    console.log(userId);
 
-    const token = jwt.sign(
-      { id: result.insertId, email },
-      process.env.JWT_SECRET
-    );
+    const token = jwt.sign({ userId, email }, process.env.JWT_SECRET);
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -39,7 +39,7 @@ export const userSignup = async (req, res) => {
       sameSite: "lax",
     });
 
-    res.status(201).json({ message: "User created", id: result.insertId });
+    res.status(201).json({ message: "User created", id: result.userId });
   } catch (err) {
     console.error("Signup error:", err); // <-- Add this
     res

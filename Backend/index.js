@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 import classRoomRouter from "./routes/classRoomRoutes.js";
 import announceRouter from "./routes/announcementRouter.js";
@@ -16,6 +17,7 @@ app.use(
 );
 // Middleware
 app.use(express.json()); // Required to parse JSON body
+app.use(cookieParser());
 
 // Base route
 app.get("/", (req, res) => {
@@ -24,10 +26,9 @@ app.get("/", (req, res) => {
 
 // Mount user routes
 app.use("/api", announceRouter);
-app.use("/api", userRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api", classRoomRouter);
 // app.use('/api/auth', authRoutes);
-
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

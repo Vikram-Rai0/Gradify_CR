@@ -7,7 +7,7 @@ import {
   updateUser,
   deleteUser,
   getCurrentUser,
-  logoutUser
+  logoutUser,
 } from "../controllers/userControllers.js";
 
 const router = express.Router();
@@ -19,6 +19,6 @@ router.get("/me", getCurrentUser); // GET current user via HTTP-only cookie
 router.get("/:user_id", selectUser);
 router.put("/:user_id", updateUser);
 router.delete("/:user_id", deleteUser);
-router.get("/logout", logoutUser); 
+router.get("/logout", logoutUser);
 
 export default router;
