@@ -16,6 +16,7 @@ import {
   FaUpload,
   FaBullhorn,
   FaStrikethrough,
+  FaChevronDown,
 } from "react-icons/fa";
 
 const AnnouncementPost = forwardRef(
@@ -24,54 +25,73 @@ const AnnouncementPost = forwardRef(
     ref
   ) => {
     const editorRef = useRef(null);
+    const dropdownRef = useRef(null);
     const [selectedClassId, setSelectedClassId] = useState([]);
     const [userId, setUserId] = useState(null);
     const [classList, setClassList] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isEditorVisible, setIsEditorVisible] = useState(true);
 
-
-    // Fetch user and classes
+    // Fetch user and class list
     useEffect(() => {
       axios
-        .get("http://localhost:5000/api/user/me", { withCredentials: true }) // send cookie
+        .get("http://localhost:5000/api/user/me", { withCredentials: true })
         .then((res) => {
           setUserId(res.data.user_id);
-          console.log("Current logged-in user ID from cookie:", res.data.user_id);
           if (currentClassId) {
             setSelectedClassId([currentClassId]);
           }
         })
         .catch((err) => {
           console.error("Failed to fetch current user:", err);
-        }, [[currentClassId]]);
+        });
+
       axios
         .get("http://localhost:5000/api/classroom/getClassroom")
         .then((res) => setClassList(res.data))
         .catch((err) => console.error("Failed to fetch class list", err));
+    }, [currentClassId]);
+
+    // handleclickOutSide for drop down 
+    useEffect(() => {
+      const handleClickOutSide = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+          setDropdownOpen(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutSide);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutSide);
+      };
     }, []);
-    // NEW: Toggle class selection
+
     const toggleClassSelection = (classId) => {
       if (selectedClassId.includes(classId)) {
-        setSelectedClassId(selectedClassId.filter(id => id !== classId));
+        setSelectedClassId(selectedClassId.filter((id) => id !== classId));
       } else {
         setSelectedClassId([...selectedClassId, classId]);
       }
     };
 
-    // NEW: Toggle select all classes
     const toggleSelectAll = () => {
       if (selectAll) {
         setSelectedClassId([]);
       } else {
-        setSelectedClassId(classList.map(cls => cls.class_id));
+        setSelectedClassId(classList.map((cls) => cls.class_id));
       }
       setSelectAll(!selectAll);
     };
 
+    const getSelectedClassNames = () => {
+      if (selectedClassId.length === 0) return "Select class";
+      if (selectedClassId.length === classList.length) return "All classes";
+      const names = classList
+        .filter((cls) => selectedClassId.includes(cls.class_id))
+        .map((cls) => cls.class_name);
+      return names.join(", ");
+    };
 
-
-    // Expose method to parent
     useImperativeHandle(ref, () => ({
       getContent: () => editorRef.current?.innerHTML || "",
     }));
@@ -83,43 +103,34 @@ const AnnouncementPost = forwardRef(
 
     const handlePost = async () => {
       if (!userId) {
-        alert("User not logged in or user info not loaded yet.");
+        alert("User not logged in.");
         return;
       }
       const htmlContent = editorRef.current?.innerHTML;
       const plainText = editorRef.current?.innerText;
 
-      if (!plainText.trim() || selectedClassId.length === 0) { // UPDATED condition
+      if (!plainText.trim() || selectedClassId.length === 0) {
         alert("Please select at least one class and write a message.");
         return;
       }
 
-      const postData = {
-        class_id: selectedClassId,
-        posted_by: userId,
-        message: htmlContent,
-      };
-
       try {
-        // NEW: Create multiple posts for each selected class
-        const postPromises = selectedClassId.map(classId =>
-          axios.post(
-            "http://localhost:5000/api/announcement/announcements",
-            {
-              class_id: classId,
-              posted_by: userId,
-              message: htmlContent
-            }
-          )
+        const postPromises = selectedClassId.map((classId) =>
+          axios.post("http://localhost:5000/api/announcement/announcements", {
+            class_id: classId,
+            posted_by: userId,
+            message: htmlContent,
+          })
         );
-        const responses = await Promise.all(postPromises)
-        responses.forEach((response, index) => {
 
-
-          if (response.status === 201 || response.status === 200) {
+        const responses = await Promise.all(postPromises);
+        responses.forEach((response) => {
+          if (response.status === 200 || response.status === 201) {
             onNewPost?.({
-              ...postData,
               id: response.data.insertId || Date.now(),
+              posted_by: userId,
+              message: htmlContent,
+              class_id: selectedClassId,
               date: new Date().toLocaleDateString(),
               time: new Date().toLocaleTimeString([], {
                 hour: "2-digit",
@@ -130,92 +141,71 @@ const AnnouncementPost = forwardRef(
         });
 
         editorRef.current.innerHTML = "";
-        setSelectedClassId("");
+        setSelectedClassId([]);
+        setSelectAll(false);
         setIsEditorVisible(false);
         closeEditor?.();
-
-
       } catch (error) {
         console.error("Error posting announcement:", error);
       }
     };
-    if (!isEditorVisible) {
-      return null;
-    }
+
+    if (!isEditorVisible) return null;
 
     return (
-      <div className="p-4 bg-white rounded shadow w-full max-w-3xl mx-auto mb-4">
-        {/* Header: Class Selector + Audience */}
-        <select name="" id="">
-          <div className="mb-4">
-            <option value="">
-              <div className="flex items-center gap-2 mb-2">
+      <div className="p-4 bg-white rounded shadow w-full max-w-3xl mx-auto mb-4 relative">
+        {/* Class Dropdown */}
+        <div className="mb-4 relative w-50">
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="w-full border rounded px-4 py-2 flex justify-between items-center"
+          >
+            <span className="text-sm text-gray-700">{getSelectedClassNames()}</span>
+            <FaChevronDown />
+          </button>
 
-                <label className="flex items-center gap-1 cursor-pointer">
+          {dropdownOpen && (
+
+            <div ref={dropdownRef} className="absolute z-10 mt-2 w-full bg-gray-100 border rounded shadow p-2 max-h-64 overflow-auto">
+              <label className="flex items-center gap-2 mb-2 hover:bg-white p-1 rounded-sm">
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={toggleSelectAll}
+                  className="h-4 w-4 "
+                />
+                <span className="text-sm font-medium ">Select All</span>
+              </label>
+
+              {classList.map((cls) => (
+                <label
+                  key={cls.class_id}
+                  className="flex items-center gap-2 mb-1 cursor-pointer hover:bg-white p-1 rounded-sm h-7"
+                >
                   <input
                     type="checkbox"
-                    checked={selectAll}
-                    onChange={toggleSelectAll}
-                    className="h-4 w-4 text-blue-600 rounded"
+                    checked={selectedClassId.includes(cls.class_id)}
+                    onChange={() => toggleClassSelection(cls.class_id)}
+                    className="h-4 w-4"
                   />
-                  <span className="font-medium">Select All Classes</span>
+                  <span className="text-sm">{cls.class_name}</span>
                 </label>
-
-              </div>
-            </option>
-            <option value="">
-              <div className="flex flex-wrap gap-3">
-                {classList.map((cls) => (
-                  <label
-                    key={cls.class_id}
-                    className="flex items-center gap-1 cursor-pointer bg-gray-50 px-3 py-1 rounded border border-gray-200"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedClassId.includes(cls.class_id)}
-                      onChange={() => toggleClassSelection(cls.class_id)}
-                      className="h-4 w-4 text-blue-600 rounded"
-                    />
-                    <span className="text-sm">{cls.class_name}</span>
-                  </label>
-                ))}
-              </div>
-            </option>
-          </div>
-        </select>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Toolbar */}
         <div className="flex gap-2 text-gray-600 mb-2">
-          <button
-            onClick={() => formatText("bold")}
-            className="border p-1 h-7 rounded hover:bg-gray-200"
-          >
-            <FaBold />
-          </button>
-          <button
-            onClick={() => formatText("italic")}
-            className="border p-1 h-7 rounded hover:bg-gray-200"
-          >
-            <FaItalic />
-          </button>
-          <button
-            onClick={() => formatText("underline")}
-            className="border p-1 h-7 rounded hover:bg-gray-200"
-          >
-            <FaUnderline />
-          </button>
-          <button
-            onClick={() => formatText("insertUnorderedList")}
-            className="border p-1 h-7 rounded hover:bg-gray-200"
-          >
-            <FaListUl />
-          </button>
-          <button
-            onClick={() => formatText("strikeThrough")}
-            className="border p-1 h-7 rounded hover:bg-gray-200"
-          >
-            <FaStrikethrough />
-          </button>
+          {[["bold", <FaBold />], ["italic", <FaItalic />], ["underline", <FaUnderline />], ["insertUnorderedList", <FaListUl />], ["strikeThrough", <FaStrikethrough />]].map(([cmd, icon]) => (
+            <button
+              key={cmd}
+              onClick={() => formatText(cmd)}
+              className="border p-1 h-7 rounded hover:bg-gray-200"
+            >
+              {icon}
+            </button>
+          ))}
         </div>
 
         {/* Editor */}
@@ -229,24 +219,16 @@ const AnnouncementPost = forwardRef(
         {/* Footer */}
         {!editorOnly && (
           <div className="flex justify-between items-center">
-            {/* Left: Optional tools */}
             <div className="flex gap-4 text-gray-600">
-              <button>
-                <FaBullhorn />
-              </button>
-              <button>
-                <FaYoutube />
-              </button>
+              <FaBullhorn />
+              <FaYoutube />
               <label className="cursor-pointer flex items-center gap-1">
                 <input type="file" className="hidden" />
                 <FaUpload />
               </label>
-              <button>
-                <FaLink />
-              </button>
+              <FaLink />
             </div>
 
-            {/* Right: Post / Cancel */}
             {!hideFooterButtons && (
               <div className="flex gap-2">
                 <button
@@ -255,7 +237,6 @@ const AnnouncementPost = forwardRef(
                 >
                   Cancel
                 </button>
-
                 <button
                   onClick={handlePost}
                   className="bg-blue-600 text-white px-4 py-2 rounded"
