@@ -33,16 +33,39 @@ export const postAnnouncement = async (req, res) => {
 
 export const getAnnouncement = async (req, res) => {
   try {
-    const sql = "SELECT * FROM announcements ORDER BY created_at DESC";
-    db.query(sql, (err, results) => {
-      if (err) {
-        console.error("Fetch error:", err);
-        return res.status(500).json({ message: "Server error" });
+
+    const { class_id, limit } = req.query;
+    if (!class_id || isNaN(class_id)) {
+      return res.status(400).json({ message: "Valid Class ID is required" });
+    }
+
+    // Handle limit parameter safely
+    let maxLimit = 50;
+    if (limit) {
+      const parsed = parseInt(limit);
+      if (!isNaN(parsed) && parsed > 0) {
+        maxLimit = Math.min(parsed, 100);
       }
-      return res.json(results);
+    }
+
+    const sql = `
+      SELECT announcement_id, posted_by, created_at, message 
+      FROM announcement
+      WHERE class_id = ? 
+      ORDER BY created_at DESC 
+      LIMIT ?
+    `;
+
+    db.query(sql, [class_id, maxLimit], (err, results) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ message: "Database operation failed" });
+      }
+      return res.status(200).json(results);
     });
   } catch (error) {
-    return res.status(400).json({ err: error.message });
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 

@@ -9,16 +9,18 @@ import {
   getCurrentUser,
   logoutUser,
 } from "../controllers/userControllers.js";
+import { verifyUser } from "../middlewares/authMiddleware.js";
+import { isAdmin } from "../middlewares/validateUser.js";
 
 const router = express.Router();
 
-router.get("/", getAllUsers);
+router.get("/", verifyUser, isAdmin, getAllUsers);
 router.post("/signup", userSignup);
 router.post("/login", userLogin);
-router.get("/me", getCurrentUser);
+router.get("/me", verifyUser, getCurrentUser);
 router.get("/logout", logoutUser);
 router.get("/:user_id", selectUser);
 router.put("/:user_id", updateUser);
-router.delete("/:user_id", deleteUser);
+router.delete("/:user_id", isAdmin, deleteUser);
 
 export default router;
