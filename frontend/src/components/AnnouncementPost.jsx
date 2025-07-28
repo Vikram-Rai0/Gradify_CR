@@ -120,7 +120,7 @@ const AnnouncementPost = forwardRef(
             class_id: classId,
             posted_by: userId,
             message: htmlContent,
-          })
+          }, { withCredentials: true })
         );
 
         const responses = await Promise.all(postPromises);

@@ -1,20 +1,22 @@
 import db from "../config/db.js";
+
+// ✅ POST: Create new announcement
 export const postAnnouncement = async (req, res) => {
   try {
-    const { class_id, posted_by, message } = req.body;
-    console.log("Received:", { class_id, posted_by, message });
+    const { class_id, message } = req.body;
+    const posted_by = req.user?.user_id;
 
-    // Validate required fields
-    if (!class_id || !posted_by || !message) {
+    if (!class_id || !posted_by || !message?.trim()) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const sql =
-      "INSERT INTO announcement (class_id, posted_by, message) VALUES (?, ?, ?)";
+    const sql = `
+      INSERT INTO announcement (class_id, posted_by, message)
+      VALUES (?, ?, ?)
+    `;
     db.query(sql, [class_id, posted_by, message], (err, result) => {
-      console.log("Inside query callback");
       if (err) {
-        console.error("Database error while inserting announcement:", err);
+        console.error("Database error while inserting announcement:", err.sqlMessage || err);
         return res.status(500).json({ message: "Database error" });
       }
 
@@ -24,86 +26,87 @@ export const postAnnouncement = async (req, res) => {
       });
     });
   } catch (error) {
-    console.error("Error inserting announcement:", error);
-    return res.status(500).json({ message: "Server error" });
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Start server
-
+// ✅ GET: Get announcements for a class
 export const getAnnouncement = async (req, res) => {
   try {
-
     const { class_id, limit } = req.query;
+
     if (!class_id || isNaN(class_id)) {
-      return res.status(400).json({ message: "Valid Class ID is required" });
+      return res.status(400).json({ message: "Valid class_id is required" });
     }
 
-    // Handle limit parameter safely
-    let maxLimit = 50;
-    if (limit) {
-      const parsed = parseInt(limit);
-      if (!isNaN(parsed) && parsed > 0) {
-        maxLimit = Math.min(parsed, 100);
-      }
-    }
+    const maxLimit = Math.min(parseInt(limit) || 50, 100);
 
     const sql = `
-      SELECT announcement_id, posted_by, created_at, message 
-      FROM announcement
-      WHERE class_id = ? 
-      ORDER BY created_at DESC 
+      SELECT a.announcement_id, a.posted_by, u.username, a.message, a.created_at
+      FROM announcement a
+      JOIN users u ON a.posted_by = u.user_id
+      WHERE a.class_id = ?
+      ORDER BY a.created_at DESC
       LIMIT ?
     `;
-
     db.query(sql, [class_id, maxLimit], (err, results) => {
       if (err) {
-        console.error("Database error:", err);
+        console.error("Database error:", err.sqlMessage || err);
         return res.status(500).json({ message: "Database operation failed" });
       }
-      return res.status(200).json(results);
+
+      res.status(200).json(results);
     });
   } catch (error) {
     console.error("Unexpected error:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export const deletAnnouncement = async (req, res) => {
+// ✅ DELETE: Delete an announcement by ID
+export const deleteAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;
-    const sql = "DELETE FROM announcements WHERE announcement_id = ?";
+
+    const sql = `DELETE FROM announcement WHERE announcement_id = ?`;
     db.query(sql, [id], (err, result) => {
       if (err) {
-        console.error("Delete error:", err);
+        console.error("Delete error:", err.sqlMessage || err);
         return res.status(500).json({ message: "Server error" });
       }
+
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Announcement not found" });
       }
+
       res.json({ message: "Deleted successfully" });
     });
   } catch (error) {
-    return res.status(400).json({ err: error.message });
+    return res.status(400).json({ message: error.message });
   }
 };
 
+// ✅ PUT: Update an announcement
 export const updateAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;
-    const { class_id, posted_by, message } = req.body;
+    const { class_id, message } = req.body;
+    const posted_by = req.user?.user_id;
 
-    // Validate required fields
-    if (!class_id || !posted_by || !message) {
+    if (!class_id || !posted_by || !message?.trim()) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const sql =
-      "UPDATE announcements SET class_id = ?, posted_by = ?, message = ? WHERE announcement_id = ?";
+    const sql = `
+      UPDATE announcement 
+      SET class_id = ?, posted_by = ?, message = ? 
+      WHERE announcement_id = ?
+    `;
     db.query(sql, [class_id, posted_by, message, id], (err, result) => {
       if (err) {
-        console.error("Update error:", err);
-        return res.status(500).json({ message: "Server error" });
+        console.error("Update error:", err.sqlMessage || err);
+        return res.status(500).json({ message: "Database error" });
       }
 
       if (result.affectedRows === 0) {
@@ -113,6 +116,7 @@ export const updateAnnouncement = async (req, res) => {
       res.json({ message: "Announcement updated successfully" });
     });
   } catch (error) {
-    return res.satus(400).json({ err: error.message });
+    console.error("Unexpected error:", error);
+    return res.status(400).json({ message: error.message });
   }
 };

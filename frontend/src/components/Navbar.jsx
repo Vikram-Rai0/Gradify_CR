@@ -4,11 +4,15 @@ import { FaBars } from "react-icons/fa6";
 import { SiGoogleclassroom } from "react-icons/si";
 import { IoIosAdd } from "react-icons/io";
 import LogoutUser from './LogoutUser';
+import { useNavigate } from 'react-router-dom'; 
 const Navbar = ({ toggleSidebar }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const navigate = useNavigate(); 
+
   const toggleOpen = () => setIsOpen(!isOpen);
   const popupRef = useRef(null);
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -26,6 +30,11 @@ const Navbar = ({ toggleSidebar }) => {
       document.addEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen]);
+
+    const handleCreateClass = () => {
+    setIsOpen(false);
+    navigate('/create-class'); // ✅ Route to your class form
+  };
   return (
     <div className='relative'>
 
@@ -50,7 +59,7 @@ const Navbar = ({ toggleSidebar }) => {
           <div ref={popupRef} className="openPopup absolute right-32 top-12 flex items-center border-2 border-gray-300 shadow-md bg-gray-50 h-30 w-37 rounded-sm">
             <div>
               <button onClick={toggleOpen} className='h-12 hover:bg-gray-200 w-full border-b border-gray-300'>Join class</button>
-              <button onClick={toggleOpen} className='h-12 hover:bg-gray-200 w-full'>Create Class</button>
+              <button onClick={handleCreateClass} className='h-12 hover:bg-gray-200 w-full'>Create Class</button>
 
             </div>
 

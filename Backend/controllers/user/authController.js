@@ -27,6 +27,7 @@ export const userSignup = async (req, res) => {
       "INSERT INTO user (name, email, role, password_hash, verified) VALUES (?, ?, ?, ?, ?)",
       [name, email, role, password_hash, 0]
     );
+    console.log(result);
 
     // Use insertId, not result.user_id
     const insertId = result.insertId;
@@ -46,7 +47,9 @@ export const userSignup = async (req, res) => {
     res.status(201).json({ message: "User created", id: insertId });
   } catch (err) {
     console.error("Signup error:", err);
-    res.status(500).json({ error: "Internal server error", detail: err.message });
+    res
+      .status(500)
+      .json({ error: "Internal server error", detail: err.message });
   }
 };
 
@@ -123,8 +126,6 @@ export const getCurrentUser = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
 
 // ======================== Logout ========================
 export const logoutUser = (req, res) => {

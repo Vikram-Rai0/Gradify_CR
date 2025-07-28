@@ -30,7 +30,7 @@ const AppRoutes = () => {
             <Route path="/login" element={<UserForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
-            <Route path="/create" element={<CreateClass />} />
+            <Route path="/create-class" element={<CreateClass />} />
 
             <Route element={<Layout />}>
 

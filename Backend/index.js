@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import userRoutes from "./routes/userRoutes.js";
+import authrouter from "./routes/authRouts.js";
 import classRoomRouter from "./routes/classRoomRoutes.js";
 import announceRouter from "./routes/announcementRouter.js";
 dotenv.config();
@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 // Mount user routes
-app.use("/api/user", userRoutes);
+app.use("/api/user", authrouter);
 app.use("/api/announcement", announceRouter);
 app.use("/api/classroom", classRoomRouter);
 // app.use('/api/auth', authRoutes);

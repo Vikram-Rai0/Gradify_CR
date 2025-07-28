@@ -1,20 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import ClassroomPost from '../components/AnnouncementPost';
 import DOMPurify from 'dompurify'; // npm install dompurify
 
-// Get cookie value
-const getCookieValue = (name) => {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-  return match ? match[2] : null;
-};
 
 const Stream = () => {
   const [isOpenAnnouncement, setIsOpenAnnouncement] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const classId = getCookieValue('class_id');
+  
+  const { classId } = useParams();
 
   const openAnnouncement = () => setIsOpenAnnouncement(true);
   const closeAnnouncement = () => setIsOpenAnnouncement(false);
@@ -22,7 +18,11 @@ const Stream = () => {
   // ✅ Memoized fetch function to avoid unnecessary re-renders
   const fetchAnnouncements = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/announcement/announcements?class_id=${classId}`);
+const res = await axios.get(
+  `http://localhost:5000/api/announcement/announcements?class_id=${classId}`,
+  { withCredentials: true } // <-- Add this
+);
+
       const formatted = res.data.map((a) => {
         const date = new Date(a.created_at);
         return {

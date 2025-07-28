@@ -21,10 +21,25 @@ const CreateClass = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:5000/api/classroom/createclass", data);
+            const res = await axios.post("http://localhost:5000/api/classroom/createclass", data,
+                {
+                    withCredentials: true
+                }
+            );
             console.log("Class created: ", res.data);
+            const class_id = res.data.class_id;
+            if (!class_id) {
+                console.error("Nod class_id returned rom server");
+                return;
+            }
+            // Set class_id in cookie
+            document.cookie = `class_id=${class_id}; path=/`
+            window.location.reload(); // Important to reload the component
+            window.location.href = "/home";
             // Reset form
             setData({ class_name: "", subject: "", section: "", semester: "", invite_code: "" });
+            // Example when user clicks "Join Class"
+
         } catch (err) {
             console.error("Error creating class: ", err.response?.data || err.message);
         }
