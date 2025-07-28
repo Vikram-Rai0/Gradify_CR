@@ -1,7 +1,6 @@
-import db from "../config/db.js";
+import db from "../../config/db.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import cookieParser from "cookie-parser";
 
 // ======================== Signup ========================
 export const userSignup = async (req, res) => {
@@ -28,10 +27,15 @@ export const userSignup = async (req, res) => {
       "INSERT INTO user (name, email, role, password_hash, verified) VALUES (?, ?, ?, ?, ?)",
       [name, email, role, password_hash, 0]
     );
-    const insertId = result.user_id;
-    console.log(insertId);
 
-    const token = jwt.sign({ insertId, email }, process.env.JWT_SECRET);
+    // Use insertId, not result.user_id
+    const insertId = result.insertId;
+
+    const token = jwt.sign(
+      { id: insertId, email, role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -39,12 +43,10 @@ export const userSignup = async (req, res) => {
       sameSite: "lax",
     });
 
-    res.status(201).json({ message: "User created", id: result.insertId });
+    res.status(201).json({ message: "User created", id: insertId });
   } catch (err) {
-    console.error("Signup error:", err); // <-- Add this
-    res
-      .status(500)
-      .json({ error: "Internal server error", detail: err.message });
+    console.error("Signup error:", err);
+    res.status(500).json({ error: "Internal server error", detail: err.message });
   }
 };
 
@@ -88,7 +90,6 @@ export const userLogin = async (req, res) => {
 
     res.status(200).json({
       message: "Login successful",
-      token,
       user: {
         id: user.user_id,
         name: user.name,
@@ -103,16 +104,14 @@ export const userLogin = async (req, res) => {
 
 // ======================== Get Logged-In User ========================
 export const getCurrentUser = async (req, res) => {
-  const token = req.cookies.token;
+  const userId = req.user?.id; // Use user id from middleware
 
-  if (!token) return res.status(401).json({ error: "Not authenticated" });
+  if (!userId) return res.status(401).json({ error: "Not authenticated" });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded); // <--- Add this
     const [result] = await db.query(
       "SELECT user_id, name, email, role FROM user WHERE user_id = ?",
-      [decoded.id]
+      [userId]
     );
 
     if (result.length === 0)
@@ -120,86 +119,14 @@ export const getCurrentUser = async (req, res) => {
 
     res.status(200).json(result[0]);
   } catch (err) {
-    console.error("Token error:", err.message);
-    res.status(403).json({ error: "Invalid or expired token" });
+    console.error("User fetch error:", err.message);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
-// ======================== Get All Users ========================
-export const getAllUsers = async (req, res) => {
-  try {
-    const [users] = await db.query("SELECT * FROM user");
-    res.status(200).json(users);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-// ======================== Get Single User ========================
-export const selectUser = async (req, res) => {
-  const userId = req.params.user_id;
 
-  try {
-    const [result] = await db.query("SELECT * FROM user WHERE user_id = ?", [
-      userId,
-    ]);
 
-    if (result.length === 0)
-      return res.status(404).json({ message: "User not found" });
-
-    res.status(200).json(result[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// ======================== Update User ========================
-export const updateUser = async (req, res) => {
-  const userId = req.params.user_id;
-  const { name, role, email, password } = req.body;
-
-  if (!userId) return res.status(400).json({ error: "User ID is required" });
-
-  try {
-    const password_hash = password
-      ? await bcrypt.hash(password, 10)
-      : undefined;
-
-    const [result] = await db.query(
-      "UPDATE user SET name = ?, role = ?, email = ?, password_hash = ? WHERE user_id = ?",
-      [name, role, email, password_hash, userId]
-    );
-
-    if (result.affectedRows === 0)
-      return res.status(404).json({ error: "User not found" });
-
-    res.status(200).json({ message: "User updated" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// ======================== Delete User ========================
-export const deleteUser = async (req, res) => {
-  const userId = req.params.user_id;
-
-  if (!userId) return res.status(400).json({ error: "User ID is required" });
-
-  try {
-    const [result] = await db.query("DELETE FROM user WHERE user_id = ?", [
-      userId,
-    ]);
-
-    if (result.affectedRows === 0)
-      return res.status(404).json({ message: "User not found" });
-
-    res.status(200).json({ message: "User deleted" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Logout
-
+// ======================== Logout ========================
 export const logoutUser = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
