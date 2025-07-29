@@ -1,4 +1,4 @@
-import db from "../config/db.js";
+import db from "../../config/db.js";
 import express from "express";
 
 export const createroom = async (req, res) => {
@@ -71,32 +71,37 @@ console.log("req.user:", req.user);
   }
 };
 
-// Get classrooms (all or filtered by user)
 export const getClassroom = async (req, res) => {
   const user_id = req.user?.id;
   const role = req.user?.role;
-  const { semester } = req.query;
+
+  if (!user_id) return res.status(401).json({ error: "Unauthorized" });
 
   try {
-    let query = "SELECT * FROM classroom";
-    let values = [];
+    // Fetch classrooms created by the user
+    const [createdClasses] = await db.execute(
+      `SELECT * FROM classroom WHERE instructor_id = ?`,
+      [user_id]
+    );
 
-    // Instructor: show only their own classes
-    if (["instructor", "teacher"].includes(role)) {
-      query += " WHERE instructor_id = ?";
-      values.push(user_id);
-      if (semester) {
-        query += " AND semester = ?";
-        values.push(semester);
-      }
-    } else if (semester) {
-      query += " WHERE semester = ?";
-      values.push(semester);
-    }
+    // Fetch classrooms joined by the user
+    const [joinedClasses] = await db.execute(
+      `SELECT c.* 
+       FROM classroom c
+       JOIN classroom_members cm ON c.class_id = cm.class_id
+       WHERE cm.user_id = ?`,
+      [user_id]
+    );
 
-    const [rows] = await db.execute(query, values);
+    // Merge and remove duplicates using class_id as key
+    const mergedClasses = [
+      ...createdClasses,
+      ...joinedClasses.filter(
+        (jc) => !createdClasses.some((cc) => cc.class_id === jc.class_id)
+      ),
+    ];
 
-    res.status(200).json(rows);
+    res.status(200).json(mergedClasses);
   } catch (error) {
     console.error("Error fetching classrooms:", error);
     res.status(500).json({ error: "Failed to fetch classrooms" });
