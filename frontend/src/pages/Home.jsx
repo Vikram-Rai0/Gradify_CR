@@ -14,7 +14,7 @@ const GetClasses = () => {
     useEffect(() => {
         const fetchClasses = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/classroom/getclassroom');
+                const res = await axios.get('http://localhost:5000/api/classroom/getclassroom',{withCredentials: true});
                 setClasses(res.data);
                 setLoading(false);
             } catch (err) {

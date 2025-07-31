@@ -35,22 +35,30 @@ const AnnouncementPost = forwardRef(
 
     // Fetch user and class list
     useEffect(() => {
+
       axios
         .get("http://localhost:5000/api/user/me", { withCredentials: true })
         .then((res) => {
+          console.log("User data:", res.data);
           setUserId(res.data.user_id);
-          if (currentClassId) {
-            setSelectedClassId([currentClassId]);
-          }
+
         })
         .catch((err) => {
           console.error("Failed to fetch current user:", err);
         });
 
       axios
-        .get("http://localhost:5000/api/classroom/getClassroom")
-        .then((res) => setClassList(res.data))
+        .get("http://localhost:5000/api/classroom/getClassroom", { withCredentials: true })
+        .then((res) => {
+          console.log("Classroom Data", res.data);
+          setClassList(res.data);
+        }
+        )
+
+
         .catch((err) => console.error("Failed to fetch class list", err));
+
+
     }, [currentClassId]);
 
     // handleclickOutSide for drop down 

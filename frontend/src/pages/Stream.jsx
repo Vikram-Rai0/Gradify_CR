@@ -4,24 +4,35 @@ import { useParams } from 'react-router-dom';
 import ClassroomPost from '../components/AnnouncementPost';
 import DOMPurify from 'dompurify'; // npm install dompurify
 
-
 const Stream = () => {
+  const params = useParams();
+  console.log("useParams() =", params);
+
+  const rawClassId = params.classId;
+  const classId = parseInt(
+    typeof rawClassId === "object" ? rawClassId?.id : rawClassId
+  );
+
+  if (isNaN(classId)) {
+    console.error("Invalid classId:", rawClassId);
+  }
+
   const [isOpenAnnouncement, setIsOpenAnnouncement] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  const { classId } = useParams();
 
   const openAnnouncement = () => setIsOpenAnnouncement(true);
   const closeAnnouncement = () => setIsOpenAnnouncement(false);
 
-  // ✅ Memoized fetch function to avoid unnecessary re-renders
   const fetchAnnouncements = useCallback(async () => {
     try {
-const res = await axios.get(
-  `http://localhost:5000/api/announcement/announcements?class_id=${classId}`,
-  { withCredentials: true } // <-- Add this
-);
+      const res = await axios.get(
+        `http://localhost:5000/api/announcement/announcements`,
+        {
+          params: { class_id: classId },
+          withCredentials: true,
+        }
+      );
 
       const formatted = res.data.map((a) => {
         const date = new Date(a.created_at);
@@ -42,7 +53,9 @@ const res = await axios.get(
   }, [classId]);
 
   useEffect(() => {
-    if (classId) fetchAnnouncements();
+    if (!isNaN(classId)) {
+      fetchAnnouncements();
+    }
   }, [classId, fetchAnnouncements]);
 
   const handleNewPost = () => {
@@ -50,10 +63,10 @@ const res = await axios.get(
     closeAnnouncement();
   };
 
-  if (!classId) {
+  if (isNaN(classId)) {
     return (
       <div className="text-red-500 mt-10 text-lg font-semibold">
-        Class ID not found. Please join a class.
+        Class ID not found or invalid. Please join a valid class.
       </div>
     );
   }

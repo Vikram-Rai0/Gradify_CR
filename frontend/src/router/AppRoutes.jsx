@@ -22,6 +22,7 @@ import UserForm from '../pages/userForm/UserForm';
 import HomePage from '../pages/FrontPage';
 import ForgotPassword from '../pages/userForm/ForgetPassword';
 import CreateClass from '../pages/classroom/CreateClass';
+import JoinClass from '../pages/classroom/joinClass';
 const AppRoutes = () => {
     return (
         <Routes>
@@ -31,6 +32,7 @@ const AppRoutes = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
             <Route path="/create-class" element={<CreateClass />} />
+            <Route path="/join-class" element={<JoinClass />} />
 
             <Route element={<Layout />}>
 
