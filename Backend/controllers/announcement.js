@@ -4,7 +4,7 @@ import db from "../config/db.js";
 export const postAnnouncement = async (req, res) => {
   try {
     const { class_id, message } = req.body;
-    const posted_by = req.user?.user_id;
+    const posted_by = req.user?.id;
 
     if (!class_id || !posted_by || !message?.trim()) {
       return res.status(400).json({ message: "All fields are required" });
@@ -16,7 +16,10 @@ export const postAnnouncement = async (req, res) => {
     `;
     db.query(sql, [class_id, posted_by, message], (err, result) => {
       if (err) {
-        console.error("Database error while inserting announcement:", err.sqlMessage || err);
+        console.error(
+          "Database error while inserting announcement:",
+          err.sqlMessage || err
+        );
         return res.status(500).json({ message: "Database error" });
       }
 
@@ -36,11 +39,12 @@ export const getAnnouncement = async (req, res) => {
   try {
     const { class_id, limit } = req.query;
 
-    if (!class_id || isNaN(class_id)) {
+    const classIdNum = Number(class_id);
+    if (!classIdNum || isNaN(classIdNum)) {
       return res.status(400).json({ message: "Valid class_id is required" });
     }
 
-    const maxLimit = Math.min(parseInt(limit) || 50, 100);
+    const maxLimit = Math.min(parseInt(limit, 10) || 50, 100);
 
     const sql = `
       SELECT a.announcement_id, a.posted_by, u.username, a.message, a.created_at
@@ -50,7 +54,8 @@ export const getAnnouncement = async (req, res) => {
       ORDER BY a.created_at DESC
       LIMIT ?
     `;
-    db.query(sql, [class_id, maxLimit], (err, results) => {
+
+    db.query(sql, [classIdNum, maxLimit], (err, results) => {
       if (err) {
         console.error("Database error:", err.sqlMessage || err);
         return res.status(500).json({ message: "Database operation failed" });
