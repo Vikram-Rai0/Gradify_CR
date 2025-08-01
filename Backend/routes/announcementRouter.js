@@ -17,4 +17,5 @@ announceRouter.post(
 );
 announceRouter.get("/announcements", verifyToken, getAnnouncement);
 
+
 export default announceRouter;

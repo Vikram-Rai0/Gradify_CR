@@ -33,13 +33,14 @@ export const postAnnouncement = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
+  
 // ✅ GET: Get announcements for a class
+// Get announcements
 export const getAnnouncement = async (req, res) => {
   try {
     const { class_id, limit } = req.query;
-
     const classIdNum = Number(class_id);
+
     if (!classIdNum || isNaN(classIdNum)) {
       return res.status(400).json({ message: "Valid class_id is required" });
     }
@@ -47,9 +48,9 @@ export const getAnnouncement = async (req, res) => {
     const maxLimit = Math.min(parseInt(limit, 10) || 50, 100);
 
     const sql = `
-      SELECT a.announcement_id, a.posted_by, u.username, a.message, a.created_at
+      SELECT a.announcement_id, a.posted_by, a.message, a.created_at
       FROM announcement a
-      JOIN users u ON a.posted_by = u.user_id
+      JOIN user u ON a.posted_by = u.user_id
       WHERE a.class_id = ?
       ORDER BY a.created_at DESC
       LIMIT ?
@@ -69,12 +70,12 @@ export const getAnnouncement = async (req, res) => {
   }
 };
 
-// ✅ DELETE: Delete an announcement by ID
+// Delete announcement
 export const deleteAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;
-
     const sql = `DELETE FROM announcement WHERE announcement_id = ?`;
+
     db.query(sql, [id], (err, result) => {
       if (err) {
         console.error("Delete error:", err.sqlMessage || err);
