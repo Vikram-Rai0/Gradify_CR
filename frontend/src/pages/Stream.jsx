@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import ClassroomPost from '../components/AnnouncementPost';
-import DOMPurify from 'dompurify'; // npm install dompurify
+
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+};
 
 const Stream = () => {
-  const params = useParams();
-  console.log("useParams() =", params);
-
-  const rawClassId = params.classId;
-  const classId = parseInt(
-    typeof rawClassId === "object" ? rawClassId?.id : rawClassId
-  );
-
-  if (isNaN(classId)) {
-    console.error("Invalid classId:", rawClassId);
-  }
+  const classId = parseInt(getCookie('class_id'), 10);
 
   const [isOpenAnnouncement, setIsOpenAnnouncement] = useState(false);
   const [posts, setPosts] = useState([]);
@@ -26,13 +22,10 @@ const Stream = () => {
 
   const fetchAnnouncements = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/announcement/announcements`,
-        {
-          params: { class_id: classId },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.get('http://localhost:5000/api/announcement/announcements', {
+        params: { class_id: classId },
+        withCredentials: true,
+      });
 
       const formatted = res.data.map((a) => {
         const date = new Date(a.created_at);
@@ -44,6 +37,7 @@ const Stream = () => {
           content: a.message,
         };
       });
+
       setPosts(formatted);
     } catch (err) {
       console.error('Error loading announcements:', err);
@@ -66,7 +60,7 @@ const Stream = () => {
   if (isNaN(classId)) {
     return (
       <div className="text-red-500 mt-10 text-lg font-semibold">
-        Class ID not found or invalid. Please join a valid class.
+        Class ID not found in cookie. Please join a valid class first.
       </div>
     );
   }

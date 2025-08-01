@@ -35,7 +35,6 @@ const AppRoutes = () => {
             <Route path="/join-class" element={<JoinClass />} />
 
             <Route element={<Layout />}>
-
                 {/* Main Routes */}
                 <Route path="/home" element={<Home />} />
                 <Route path="/calender" element={<Calander />} />
@@ -48,15 +47,16 @@ const AppRoutes = () => {
                     <Route path="stream" element={<Stream />} />
                     <Route path="classwork" element={<Classwork />} />
                     <Route path="people" element={<People />} />
-
                 </Route>
             </Route>
-            <Route path="class/:classId/classwork/assignment" element={<Assignment />} />
-            <Route path="class/:classId/classwork/quiz" element={<Quiz_assignment />} />
-            <Route path="class/:classId/classwork/question" element={<Question />} />
-            <Route path="class/:classId/classwork/material" element={<Material />} />
-            <Route path="class/:classId/classwork/reuse_post" element={<ReusePost />} />
-            <Route path="class/:classId/classwork/topic" element={<Topic />} />
+
+            <Route path="/class/:classId/classwork" element={<Classwork />} />
+            <Route path="/class/:classId/classwork/assignment" element={<Assignment />} />
+            <Route path="/class/:classId/classwork/quiz" element={<Quiz_assignment />} />
+            <Route path="/class/:classId/classwork/question" element={<Question />} />
+            <Route path="/class/:classId/classwork/material" element={<Material />} />
+            <Route path="/class/:classId/classwork/reuse_post" element={<ReusePost />} />
+            <Route path="/class/:classId/classwork/topic" element={<Topic />} />
 
         </Routes>
 
