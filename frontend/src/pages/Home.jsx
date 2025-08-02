@@ -31,7 +31,7 @@ const GetClasses = () => {
     if (loading) return <p className="text-center mt-10">Loading classes...</p>;
     if (error) return <p className="text-center mt-10 text-red-600">Error: {error}</p>;
     const handleClassClick = (classId) => {
-        navigate(`/class/${classId}`)
+        navigate(`/classroom/${classId}`)
     }
     return (
         <div className="p-6 max-w-7xl mx-auto">

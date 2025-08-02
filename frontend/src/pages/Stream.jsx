@@ -2,16 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 import ClassroomPost from '../components/AnnouncementPost';
-
-const getCookie = (name) => {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return null;
-};
+import { useParams } from 'react-router-dom';
 
 const Stream = () => {
-  const classId = parseInt(getCookie('class_id'), 10);
+  const { classId } = useParams();
 
   const [isOpenAnnouncement, setIsOpenAnnouncement] = useState(false);
   const [posts, setPosts] = useState([]);
@@ -22,10 +16,12 @@ const Stream = () => {
 
   const fetchAnnouncements = useCallback(async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/announcement/announcements', {
-        params: { class_id: classId },
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `http://localhost:5000/api/announcement/announcements/${classId}`,
+        {
+          withCredentials: true, // JWT cookie required
+        }
+      );
 
       const formatted = res.data.map((a) => {
         const date = new Date(a.created_at);
@@ -47,7 +43,7 @@ const Stream = () => {
   }, [classId]);
 
   useEffect(() => {
-    if (!isNaN(classId)) {
+    if (classId) {
       fetchAnnouncements();
     }
   }, [classId, fetchAnnouncements]);
@@ -57,10 +53,10 @@ const Stream = () => {
     closeAnnouncement();
   };
 
-  if (isNaN(classId)) {
+  if (!classId) {
     return (
       <div className="text-red-500 mt-10 text-lg font-semibold">
-        Class ID not found in cookie. Please join a valid class first.
+        Class ID not found in URL. Please join or navigate to a valid class.
       </div>
     );
   }
@@ -83,7 +79,7 @@ const Stream = () => {
         </div>
       </div>
 
-      {/* Post Announcement */}
+      {/* Post Announcement Button */}
       <div className="gap-4 w-full h-full flex flex-col items-center mt-4">
         {!isOpenAnnouncement && (
           <button onClick={openAnnouncement}>
@@ -93,9 +89,14 @@ const Stream = () => {
           </button>
         )}
 
+        {/* New Announcement Form */}
         {isOpenAnnouncement && (
           <div className="w-full flex justify-center">
-            <ClassroomPost closeEditor={closeAnnouncement} onNewPost={handleNewPost} />
+            <ClassroomPost
+              closeEditor={closeAnnouncement}
+              onNewPost={handleNewPost}
+              classId={classId}
+            />
           </div>
         )}
 
