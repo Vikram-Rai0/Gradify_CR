@@ -15,7 +15,6 @@ announceRouter.post(
   },
   postAnnouncement
 );
-announceRouter.get("/announcements", verifyToken, getAnnouncement);
-
+announceRouter.get("/announcements/:class_id", verifyToken, getAnnouncement);
 
 export default announceRouter;

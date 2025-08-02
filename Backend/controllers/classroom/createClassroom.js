@@ -46,11 +46,6 @@ export const createroom = async (req, res) => {
 
     const class_id = result.insertId;
 
-    res.cookie("class_id", class_id, {
-      httpOnly: false,
-      path: "/",
-      sameSite: "Lax",
-    });
 
     res.status(201).json({
       class_id,

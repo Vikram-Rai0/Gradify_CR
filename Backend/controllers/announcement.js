@@ -38,14 +38,13 @@ export const postAnnouncement = async (req, res) => {
 // Get announcements
 export const getAnnouncement = async (req, res) => {
   try {
-    const { class_id, limit } = req.query;
-    const classIdNum = Number(class_id);
+    const class_id = req.params.class_id;
 
-    if (!classIdNum || isNaN(classIdNum)) {
-      return res.status(400).json({ message: "Valid class_id is required" });
+    const limit = parseInt(req.query.limit) || 10; // Optional limit from query or default to 10
+    if (!class_id) {
+      return res.status(400).json({ message: "class_id not found in cookies" });
     }
 
-    const maxLimit = Math.min(parseInt(limit, 10) || 50, 100);
 
     const sql = `
       SELECT a.announcement_id, a.posted_by, a.message, a.created_at
@@ -56,7 +55,7 @@ export const getAnnouncement = async (req, res) => {
       LIMIT ?
     `;
 
-    db.query(sql, [classIdNum, maxLimit], (err, results) => {
+    db.query(sql, [class_id, limit], (err, results) => {
       if (err) {
         console.error("Database error:", err.sqlMessage || err);
         return res.status(500).json({ message: "Database operation failed" });
@@ -69,6 +68,7 @@ export const getAnnouncement = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // Delete announcement
 export const deleteAnnouncement = async (req, res) => {
