@@ -46,7 +46,6 @@ export const createroom = async (req, res) => {
 
     const class_id = result.insertId;
 
-
     res.status(201).json({
       class_id,
       class_name,
