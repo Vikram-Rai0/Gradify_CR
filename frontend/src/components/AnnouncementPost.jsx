@@ -114,6 +114,7 @@ const AnnouncementPost = forwardRef(
         alert("User not logged in.");
         return;
       }
+
       const htmlContent = editorRef.current?.innerHTML;
       const plainText = editorRef.current?.innerText;
 
@@ -130,8 +131,15 @@ const AnnouncementPost = forwardRef(
             message: htmlContent,
           }, { withCredentials: true })
         );
+        // Reset state
+        editorRef.current.innerHTML = "";
+        setSelectedClassId([]);
+        setSelectAll(false);
 
+        // Hide the editor
+        closeEditor?.();
         const responses = await Promise.all(postPromises);
+
         responses.forEach((response) => {
           if (response.status === 200 || response.status === 201) {
             onNewPost?.({
@@ -146,19 +154,18 @@ const AnnouncementPost = forwardRef(
               }),
             });
           }
-        });
+        }
+        );
 
-        editorRef.current.innerHTML = "";
-        setSelectedClassId([]);
-        setSelectAll(false);
-        setIsEditorVisible(false);
-        closeEditor?.();
+
+
       } catch (error) {
         console.error("Error posting announcement:", error);
       }
     };
 
-    if (!isEditorVisible) return null;
+
+
 
     return (
       <div className="p-4 bg-white rounded shadow w-full max-w-3xl mx-auto mb-4 relative">
@@ -245,12 +252,16 @@ const AnnouncementPost = forwardRef(
                 >
                   Cancel
                 </button>
-                <button
-                  onClick={handlePost}
-                  className="bg-blue-600 text-white px-4 py-2 rounded"
-                >
-                  Post
-                </button>
+                {isEditorVisible && (
+
+
+                  <button
+                    onClick={handlePost}
+                    className="bg-blue-600 text-white px-4 py-2 rounded"
+                  >
+                    Post
+                  </button>
+                )}
               </div>
             )}
           </div>
