@@ -14,33 +14,27 @@ const Stream = () => {
   const openAnnouncement = () => setIsOpenAnnouncement(true);
   const closeAnnouncement = () => setIsOpenAnnouncement(false);
 
-  const fetchAnnouncements = useCallback(async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/announcement/announcements/${classId}`,
-        {
-          withCredentials: true, // JWT cookie required
-        }
-      );
+ const fetchAnnouncements = useCallback(async () => {
+  try {
+    const res = await axios.get(
+      `http://localhost:5000/api/announcement/announcements/${classId}`,
+      { withCredentials: true }
+    );
+    const formatted = res.data.map((a) => ({
+      id: a.announcement_id,
+      author: a.username,  // Fixed: changed from 'a.name' to 'a.username'
+      date: a.date,
+      time: a.time,
+      content: a.message,
+    }));
 
-      const formatted = res.data.map((a) => {
-        const date = new Date(a.created_at);
-        return {
-          id: a.announcement_id,
-          author: a.posted_by,
-          date: date.toLocaleDateString(),
-          time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          content: a.message,
-        };
-      });
-
-      setPosts(formatted);
-    } catch (err) {
-      console.error('Error loading announcements:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [classId]);
+    setPosts(formatted);
+  } catch (err) {
+    console.error('Error loading announcements:', err);
+  } finally {
+    setLoading(false);
+  }
+}, [classId]);
 
   useEffect(() => {
     if (classId) {
@@ -128,11 +122,34 @@ const Stream = () => {
           </div>
 
           {/* Assignments Placeholder */}
-          <div className="assignment gap-2 flex flex-col justify-items-end m-3 w-full md:w-[300px]">
-            <div className="postAssignment border-2 border-[#93BFCF] h-[160px] w-full flex items-end justify-center p-2 rounded-lg">
-              <div className="addcomment border-t w-full h-[60px]"></div>
-            </div>
+          <div className="assignment gap-2 flex flex-col m-3 w-full md:w-[300px]">
+            <h2 className="text-lg font-semibold text-[#508C9B] mb-2">Recent Announcements</h2>
+
+            {loading ? (
+              <p className="text-sm text-gray-500">Loading...</p>
+            ) : posts.length === 0 ? (
+              <p className="text-sm text-gray-500">No announcements yet.</p>
+            ) : (
+              posts.slice(0, 3).map((post) => (
+                <div
+                  key={post.id}
+                  className="border-2 border-[#93BFCF] bg-white rounded-lg p-3 shadow text-sm"
+                >
+                  <div className="font-medium text-gray-700 mb-1">{post.author}</div>
+                  <div
+                    className="text-gray-600 text-xs line-clamp-3"
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(post.content),
+                    }}
+                  />
+                  <div className="text-[10px] text-gray-400 mt-1">
+                    {post.date}, {post.time}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
+
         </div>
       </div>
     </div>
