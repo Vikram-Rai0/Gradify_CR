@@ -33,21 +33,28 @@ export const postAnnouncement = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-  
+
 // ✅ GET: Get announcements for a class
-// Get announcements
+// ✅ GET: Get announcements for a class
 export const getAnnouncement = async (req, res) => {
   try {
     const class_id = req.params.class_id;
+    const limit = parseInt(req.query.limit) || 10;
 
-    const limit = parseInt(req.query.limit) || 10; // Optional limit from query or default to 10
-    if (!class_id) {
-      return res.status(400).json({ message: "class_id not found in cookies" });
+    // Validate class_id
+    if (!class_id || !/^[a-zA-Z0-9-]+$/.test(class_id)) {
+      return res.status(400).json({ 
+        message: "Invalid class ID format" 
+      });
     }
 
-
     const sql = `
-      SELECT a.announcement_id, a.posted_by, a.message, a.created_at
+      SELECT 
+        a.announcement_id,
+        u.name AS name,
+        a.message,
+        DATE_FORMAT(a.created_at, '%Y-%m-%d') AS date,
+        DATE_FORMAT(a.created_at, '%h:%i %p') AS time
       FROM announcement a
       JOIN user u ON a.posted_by = u.user_id
       WHERE a.class_id = ?
@@ -57,18 +64,24 @@ export const getAnnouncement = async (req, res) => {
 
     db.query(sql, [class_id, limit], (err, results) => {
       if (err) {
-        console.error("Database error:", err.sqlMessage || err);
-        return res.status(500).json({ message: "Database operation failed" });
+        console.error("Database error:", err);
+        return res.status(500).json({ 
+          message: "Failed to fetch announcements",
+          errorCode: "DB_QUERY_FAILED"
+        });
       }
 
-      res.status(200).json(results);
+      // Return empty array instead of null
+      res.status(200).json(results || []);
     });
   } catch (error) {
     console.error("Unexpected error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ 
+      message: "Internal server error",
+      errorCode: "SERVER_ERROR"
+    });
   }
 };
-
 
 // Delete announcement
 export const deleteAnnouncement = async (req, res) => {
