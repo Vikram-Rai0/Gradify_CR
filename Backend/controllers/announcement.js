@@ -34,8 +34,8 @@ export const postAnnouncement = async (req, res) => {
   }
 };
 
-// ✅ GET: Get announcements for a class
-// ✅ GET: Get announcements for a class
+
+// Get announcements for a class
 export const getAnnouncement = async (req, res) => {
   try {
     const class_id = req.params.class_id;

@@ -7,7 +7,7 @@ import { verifyToken } from "../middlewares/authMiddleware.js";
 const announceRouter = express.Router();
 
 announceRouter.post(
-  "/announcements",
+  "/postannouncement",
   verifyToken,
   (req, res, next) => {
     console.log("Announcement POST request received");
@@ -15,6 +15,15 @@ announceRouter.post(
   },
   postAnnouncement
 );
-announceRouter.get("/announcements/:class_id", verifyToken, getAnnouncement);
+// announceRouter.get("/announcements/:class_id", verifyToken, (req, res, next) => {
+//   console.log(`Fetching announcements for class: ${req.params.class_id}`);
+//   next();
+// }, getAnnouncement);
+
+// In server/routes/announcement.js
+announceRouter.get("getannouncementsByClasses/class/:classId", verifyToken, (req, res, next) => {
+  console.log(`Fetching announcements for class: ${req.params.classId}`);
+  next();
+}, getAnnouncement);
 
 export default announceRouter;
