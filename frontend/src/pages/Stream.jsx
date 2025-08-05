@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
-import ClassroomPost from '../components/AnnouncementPost';
+import ClassroomPost from '../components/Announcement';
 import { useParams } from 'react-router-dom';
 
 const Stream = () => {

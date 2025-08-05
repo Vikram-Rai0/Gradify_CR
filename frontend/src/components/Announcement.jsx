@@ -19,7 +19,7 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 
-const AnnouncementPost = forwardRef(
+const Announcement = forwardRef(
   (
     { onNewPost, closeEditor, editorOnly = false, hideFooterButtons = false, currentClassId = null },
     ref
@@ -125,7 +125,8 @@ const AnnouncementPost = forwardRef(
 
       try {
         const postPromises = selectedClassId.map((classId) =>
-          axios.post("http://localhost:5000/api/announcement/announcements", {
+          axios.post("http://localhost:5000/api/announcement/postannouncement", 
+            {
             class_id: classId,
             posted_by: userId,
             message: htmlContent,
@@ -165,7 +166,7 @@ const AnnouncementPost = forwardRef(
     };
 
 
-
+// get announcement 
 
     return (
       <div className="p-4 bg-white rounded shadow w-full max-w-3xl mx-auto mb-4 relative">
@@ -271,4 +272,4 @@ const AnnouncementPost = forwardRef(
   }
 );
 
-export default AnnouncementPost;
+export default Announcement;
