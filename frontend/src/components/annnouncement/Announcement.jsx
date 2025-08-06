@@ -125,12 +125,11 @@ const Announcement = forwardRef(
 
       try {
         const postPromises = selectedClassId.map((classId) =>
-          axios.post("http://localhost:5000/api/announcement/postannouncement", 
+          axios.post("http://localhost:5000/api/announcement/postannouncement",
             {
-            class_id: classId,
-            posted_by: userId,
-            message: htmlContent,
-          }, { withCredentials: true })
+              class_id: classId,
+              message: htmlContent,
+            }, { withCredentials: true })
         );
         // Reset state
         editorRef.current.innerHTML = "";
@@ -144,7 +143,7 @@ const Announcement = forwardRef(
         responses.forEach((response) => {
           if (response.status === 200 || response.status === 201) {
             onNewPost?.({
-              id: response.data.insertId || Date.now(),
+              announcement_id: response.data.insertId || Date.now(),
               posted_by: userId,
               message: htmlContent,
               class_id: selectedClassId,
@@ -166,7 +165,7 @@ const Announcement = forwardRef(
     };
 
 
-// get announcement 
+    // get announcement 
 
     return (
       <div className="p-4 bg-white rounded shadow w-full max-w-3xl mx-auto mb-4 relative">

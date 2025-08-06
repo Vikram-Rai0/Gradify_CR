@@ -66,7 +66,8 @@ export default function CreateMenu() {
                 key={item.label}
                 onClick={() => {
                   setOpen(false);
-                  navigate(`/class/${classId}/classwork/${item.path}`);
+                  navigate(`/classroom/${classId}/classwork/${item.path}`);
+
                   // navigate(item.path); // 🔁 Navigate to the right page
                 }}
                 className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

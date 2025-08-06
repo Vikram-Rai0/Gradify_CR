@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+
 const CreateClass = () => {
     const [data, setData] = useState({
         class_name: "",
@@ -9,6 +10,9 @@ const CreateClass = () => {
         invite_code: "",
         semester: ""
     });
+    const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate(); // <-- Call the hook here
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -20,6 +24,9 @@ const CreateClass = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading) return; // Prevent double submits
+
+        setLoading(true);
         try {
             const res = await axios.post(
                 "http://localhost:5000/api/classroom/createclass",
@@ -29,7 +36,6 @@ const CreateClass = () => {
 
             console.log("Class created: ", res.data);
 
-            // Handle different possible server response formats
             const class_id =
                 res.data.class_id ||
                 res.data.id ||
@@ -38,15 +44,14 @@ const CreateClass = () => {
 
             if (!class_id) {
                 console.error("No class_id returned from server", res.data);
+                setLoading(false);
                 return;
             }
 
-            // Ensure class_id is a string
             const classIdString = String(class_id);
 
-            // Correct redirect path
             const navigate = useNavigate;
-            navigate(`/classroom/${classIdString}/stream`);
+            navigate(`/classroom/${classIdString}/stream`); // Navigate after success
 
             // Reset form
             setData({
@@ -59,6 +64,8 @@ const CreateClass = () => {
 
         } catch (err) {
             console.error("Error creating class: ", err.response?.data || err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -84,17 +91,22 @@ const CreateClass = () => {
                                 invite_code: ""
                             })}
                             className='rounded-md border border-red-500 hover:bg-red-500 bg-red-600 shadow px-4 py-2 text-white'
+                            disabled={loading}
                         >
                             Cancel
                         </button>
-                        <button type="submit" className='rounded-md border border-[#456882] hover:bg-[#2e4557] bg-[#1B3C53] shadow px-4 py-2 text-white'>
-                            Create
+                        <button
+                            type="submit"
+                            className='rounded-md border border-[#456882] hover:bg-[#2e4557] bg-[#1B3C53] shadow px-4 py-2 text-white'
+                            disabled={loading}
+                        >
+                            {loading ? "Creating..." : "Create"}
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     );
-}
+};
 
 export default CreateClass;

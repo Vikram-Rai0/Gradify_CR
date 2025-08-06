@@ -1,49 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import DOMPurify from 'dompurify';
-import ClassroomPost from '../components/Announcement';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ClassroomPost from '../components/annnouncement/Announcement';
+import GetAnnouncement from '../components/annnouncement/GetAnnouncement';
 
 const Stream = () => {
   const { classId } = useParams();
-
   const [isOpenAnnouncement, setIsOpenAnnouncement] = useState(false);
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(false); // 🔁 trigger for reloading announcements
 
   const openAnnouncement = () => setIsOpenAnnouncement(true);
   const closeAnnouncement = () => setIsOpenAnnouncement(false);
 
- const fetchAnnouncements = useCallback(async () => {
-  try {
-    const res = await axios.get(
-      `http://localhost:5000/api/announcement/announcements/${classId}`,
-      { withCredentials: true }
-    );
-    const formatted = res.data.map((a) => ({
-      id: a.announcement_id,
-      author: a.username,  // Fixed: changed from 'a.name' to 'a.username'
-      date: a.date,
-      time: a.time,
-      content: a.message,
-    }));
-
-    setPosts(formatted);
-  } catch (err) {
-    console.error('Error loading announcements:', err);
-  } finally {
-    setLoading(false);
-  }
-}, [classId]);
-
-  useEffect(() => {
-    if (classId) {
-      fetchAnnouncements();
-    }
-  }, [classId, fetchAnnouncements]);
-
   const handleNewPost = () => {
-    fetchAnnouncements();
+    setReload((prev) => !prev); // 🔁 trigger GetAnnouncements re-fetch
     closeAnnouncement();
   };
 
@@ -83,7 +52,6 @@ const Stream = () => {
           </button>
         )}
 
-        {/* New Announcement Form */}
         {isOpenAnnouncement && (
           <div className="w-full flex justify-center">
             <ClassroomPost
@@ -93,65 +61,10 @@ const Stream = () => {
             />
           </div>
         )}
-
-        {/* Announcements & Assignments */}
-        <div className="w-full flex flex-col md:flex-row mt-4 max-w-[1100px]">
-          {/* Announcements */}
-          <div className="announcement gap-4 w-full flex flex-col justify-start m-3">
-            {loading ? (
-              <p>Loading announcements...</p>
-            ) : posts.length === 0 ? (
-              <p>No announcements yet.</p>
-            ) : (
-              posts.map((post) => (
-                <div
-                  key={post.id}
-                  className="border-2 border-[#508C9B] p-4 rounded-lg shadow bg-white w-full"
-                >
-                  <div className="text-sm text-gray-500 mb-2">
-                    <strong>{post.author}</strong> • {post.date}, {post.time}
-                  </div>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(post.content),
-                    }}
-                  />
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Assignments Placeholder */}
-          <div className="assignment gap-2 flex flex-col m-3 w-full md:w-[300px]">
-            <h2 className="text-lg font-semibold text-[#508C9B] mb-2">Recent Announcements</h2>
-
-            {loading ? (
-              <p className="text-sm text-gray-500">Loading...</p>
-            ) : posts.length === 0 ? (
-              <p className="text-sm text-gray-500">No announcements yet.</p>
-            ) : (
-              posts.slice(0, 3).map((post) => (
-                <div
-                  key={post.id}
-                  className="border-2 border-[#93BFCF] bg-white rounded-lg p-3 shadow text-sm"
-                >
-                  <div className="font-medium text-gray-700 mb-1">{post.author}</div>
-                  <div
-                    className="text-gray-600 text-xs line-clamp-3"
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(post.content),
-                    }}
-                  />
-                  <div className="text-[10px] text-gray-400 mt-1">
-                    {post.date}, {post.time}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-        </div>
       </div>
+
+      {/* Get announcements (independent component) */}
+            <GetAnnouncement classId={classId} reload={reload} />
     </div>
   );
 };

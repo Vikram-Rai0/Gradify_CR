@@ -23,7 +23,7 @@ const Sidebar = ({ isSidebarLocked }) => {
     >
       <ul className="space-y-2 py-6">
 
-        <Link to="/"> <SidebarItem icon={<MdHome size={24} />} label="Home" expanded={expanded} /></Link>
+        <Link to="/home"> <SidebarItem icon={<MdHome size={24} />} label="Home" expanded={expanded} /></Link>
         <Link to="/calender">  <SidebarItem icon={<FaRegCalendarAlt size={22} />} label="Calendar" expanded={expanded} /></Link>
         <hr className="border-gray-300" />
         <Link to="/teaching"><SidebarItem icon={<FaChalkboardTeacher size={22} />} label="Teaching" expanded={expanded} /></Link>
