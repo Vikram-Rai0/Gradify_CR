@@ -34,27 +34,22 @@ export const postAnnouncement = async (req, res) => {
   }
 };
 
-
 // Get announcements for a class
 export const getAnnouncement = async (req, res) => {
   try {
-    const class_id = req.params.class_id;
+    const class_id = req.params.classId;
     const limit = parseInt(req.query.limit) || 10;
 
-    // Validate class_id
     if (!class_id || !/^[a-zA-Z0-9-]+$/.test(class_id)) {
-      return res.status(400).json({ 
-        message: "Invalid class ID format" 
-      });
+      return res.status(400).json({ message: "Invalid class ID format" });
     }
 
     const sql = `
       SELECT 
         a.announcement_id,
-        u.name AS name,
+        u.name,
         a.message,
-        DATE_FORMAT(a.created_at, '%Y-%m-%d') AS date,
-        DATE_FORMAT(a.created_at, '%h:%i %p') AS time
+        a.created_at 
       FROM announcement a
       JOIN user u ON a.posted_by = u.user_id
       WHERE a.class_id = ?
@@ -65,20 +60,18 @@ export const getAnnouncement = async (req, res) => {
     db.query(sql, [class_id, limit], (err, results) => {
       if (err) {
         console.error("Database error:", err);
-        return res.status(500).json({ 
+        return res.status(500).json({
           message: "Failed to fetch announcements",
-          errorCode: "DB_QUERY_FAILED"
+          errorCode: "DB_QUERY_FAILED",
         });
       }
-
-      // Return empty array instead of null
       res.status(200).json(results || []);
     });
   } catch (error) {
     console.error("Unexpected error:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Internal server error",
-      errorCode: "SERVER_ERROR"
+      errorCode: "SERVER_ERROR",
     });
   }
 };

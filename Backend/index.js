@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import authrouter from "./routes/authRouts.js";
 import classRoomRouter from "./routes/classRoomRoutes.js";
 import announceRouter from "./routes/announcementRouter.js";
+import classworkRouter from "./routes/classworkRouter.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,6 +29,8 @@ app.get("/", (req, res) => {
 app.use("/api/user", authrouter);
 app.use("/api/announcement", announceRouter);
 app.use("/api/classroom", classRoomRouter);
+app.use("api/classwork", classworkRouter);
+app.use('/uploads', express.static('uploads'));
 // app.use('/api/auth', authRoutes);
 // Start server
 app.listen(PORT, () => {

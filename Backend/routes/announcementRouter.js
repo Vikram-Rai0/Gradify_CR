@@ -21,9 +21,14 @@ announceRouter.post(
 // }, getAnnouncement);
 
 // In server/routes/announcement.js
-announceRouter.get("getannouncementsByClasses/class/:classId", verifyToken, (req, res, next) => {
-  console.log(`Fetching announcements for class: ${req.params.classId}`);
-  next();
-}, getAnnouncement);
+announceRouter.get(
+  "/getannouncementsByClasses/class/:classId",
+  verifyToken,
+  (req, res, next) => {
+    console.log(`Fetching announcements for class: ${req.params.classId}`);
+    next();
+  },
+  getAnnouncement
+);
 
 export default announceRouter;
