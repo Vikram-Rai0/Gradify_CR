@@ -1,5 +1,8 @@
 import express from "express";
-import { postAssignment } from "../controllers/classwork/assignment.js";
+import {
+  postAssignment,
+  getAssignment,
+} from "../controllers/classwork/assignment.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 import multer from "multer";
 
@@ -12,5 +15,7 @@ classworkRouter.post(
   upload.array("attachments"), // Handle file uploads
   postAssignment
 );
+
+classworkRouter.get("/:class_id/getAssignment", verifyToken, getAssignment);
 
 export default classworkRouter;

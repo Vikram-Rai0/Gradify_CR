@@ -38,10 +38,11 @@ export const postAnnouncement = async (req, res) => {
 export const getAnnouncement = async (req, res) => {
   try {
     const class_id = req.params.classId;
+    console.log("Class ID received:", class_id);
     const limit = parseInt(req.query.limit) || 10;
 
-    if (!class_id || !/^[a-zA-Z0-9-]+$/.test(class_id)) {
-      return res.status(400).json({ message: "Invalid class ID format" });
+    if (!class_id) {
+      return res.status(400).json({ message: "class_id required" });
     }
 
     const sql = `
@@ -59,20 +60,15 @@ export const getAnnouncement = async (req, res) => {
 
     db.query(sql, [class_id, limit], (err, results) => {
       if (err) {
-        console.error("Database error:", err);
-        return res.status(500).json({
-          message: "Failed to fetch announcements",
-          errorCode: "DB_QUERY_FAILED",
-        });
+        console.error("DB error:", err);
+        return res.status(500).json({ message: "DB query failed" });
       }
+      console.log("Announcements fetched:", results);
       res.status(200).json(results || []);
     });
   } catch (error) {
     console.error("Unexpected error:", error);
-    res.status(500).json({
-      message: "Internal server error",
-      errorCode: "SERVER_ERROR",
-    });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -104,7 +100,7 @@ export const updateAnnouncement = async (req, res) => {
   try {
     const { id } = req.params;
     const { class_id, message } = req.body;
-    const posted_by = req.user?.user_id;
+    const posted_by = req.user?.id;
 
     if (!class_id || !posted_by || !message?.trim()) {
       return res.status(400).json({ message: "All fields are required" });
