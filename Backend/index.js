@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 app.use("/api/user", authrouter);
 app.use("/api/announcement", announceRouter);
 app.use("/api/classroom", classRoomRouter);
-app.use("api/classwork", classworkRouter);
+app.use("/api/classwork", classworkRouter);
 app.use('/uploads', express.static('uploads'));
 // app.use('/api/auth', authRoutes);
 // Start server

@@ -1,3 +1,5 @@
+import db from "../../config/db.js";
+
 export const postAssignment = async (req, res) => {
   const classId = req.params.class_id;
 
@@ -10,13 +12,14 @@ export const postAssignment = async (req, res) => {
   const connection = await db.getConnection();
   try {
     await connection.beginTransaction();
+    const allowLateValue = allow_late === true || allow_late === "true" ? 1 : 0;
 
     // Insert assignment
     const [assignmentResult] = await connection.query(
       `INSERT INTO assignment 
       (class_id,  title, description, due_date, grading_type, allow_late)
       VALUES (?,  ?, ?, ?, ?, ?)`,
-      [classId,  title, description, due_date, grading_type, allow_late]
+      [classId, title, description, due_date, grading_type, allowLateValue]
     );
 
     const assignmentId = assignmentResult.insertId;

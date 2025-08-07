@@ -7,7 +7,7 @@ const ClassNav = () => {
   if (!classId) return <div>Loading...</div>;
 
   return (
-    <div className="border-b border-b-gray-300 h-12">
+    <div className="border-b border-gray-300 rounded-t-3xl  h-12">
       <ul className="flex gap-6 h-full items-center pl-10 text-gray-800">
         <li>
           <Link to={`/classroom/${classId}/stream`}>Stream</Link>

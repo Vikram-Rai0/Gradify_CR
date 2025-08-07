@@ -50,7 +50,7 @@ const CreateClass = () => {
 
             const classIdString = String(class_id);
 
-            const navigate = useNavigate;
+
             navigate(`/classroom/${classIdString}/stream`); // Navigate after success
 
             // Reset form

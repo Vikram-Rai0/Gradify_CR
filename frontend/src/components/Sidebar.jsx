@@ -12,16 +12,16 @@ const Sidebar = ({ isSidebarLocked }) => {
   return (
     <aside
       className={classNames(
-        "group/sidebar bg-white min-h-screen border-r border-[#93BFCF]  transition-all duration-300 ease-in-out overflow-hidden shadow-md",
+        "group/sidebar bg-gray-100 min-h-screen border-r border-gray-200  transition-all duration-300 ease-in-out overflow-hidden shadow-md",
         {
-          "w-56 shadow-2xl": expanded,
+          "w-65 shadow-2xl": expanded,
           "w-20": !expanded,
         }
       )}
       onMouseEnter={() => !isSidebarLocked && setIsHovered(true)}
       onMouseLeave={() => !isSidebarLocked && setIsHovered(false)}
     >
-      <ul className="space-y-2 py-6">
+      <ul className="space-y-2 py-6 ">
 
         <Link to="/home"> <SidebarItem icon={<MdHome size={24} />} label="Home" expanded={expanded} /></Link>
         <Link to="/calender">  <SidebarItem icon={<FaRegCalendarAlt size={22} />} label="Calendar" expanded={expanded} /></Link>

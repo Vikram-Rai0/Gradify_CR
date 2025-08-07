@@ -4,11 +4,11 @@ import { FaBars } from "react-icons/fa6";
 import { SiGoogleclassroom } from "react-icons/si";
 import { IoIosAdd } from "react-icons/io";
 import LogoutUser from './LogoutUser';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 const Navbar = ({ toggleSidebar }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const toggleOpen = () => setIsOpen(!isOpen);
   const popupRef = useRef(null);
@@ -30,23 +30,24 @@ const Navbar = ({ toggleSidebar }) => {
       document.addEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen]);
-const handelJOinClass = () =>{
-  setIsOpen(false);
-  navigate('/join-class');
-}
-    const handleCreateClass = () => {
+  const handelJOinClass = () => {
+    setIsOpen(false);
+    navigate('/join-class');
+  }
+  const handleCreateClass = () => {
     setIsOpen(false);
     navigate('/create-class'); // ✅ Route to your class form
   };
   return (
-    <div className='relative'>
+    <div className='relative bg-gray-100'>
 
-      <nav className="flex items-center border-b-2 border-[#93BFCF] h-20 px-6 justify-between ">
+      <nav className="flex items-center  h-20 px-6 justify-between ">
         <div className='flex items-center  gap-5'>
           <FaBars className="text-xl cursor-pointer" onClick={toggleSidebar} />
           <SiGoogleclassroom className="text-xl text-green-600 cursor-pointer" />
           <span className="text-2xl text-[#213448] cursor-pointer">Classroom</span>
         </div>
+        <LogoutUser />
         <div className='flex items-center gap-5'>
           <span><button onClick={toggleOpen}><IoIosAdd className='text-4xl text-gray-700' />{isOpen}</button></span>
           <span><p className='text-green-500'>userProfile</p></span>
@@ -69,7 +70,6 @@ const handelJOinClass = () =>{
           </div>
 
         )}
-      <LogoutUser />
     </div>
 
 

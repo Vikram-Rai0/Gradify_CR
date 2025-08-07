@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ClassroomPost from '../components/annnouncement/Announcement';
 import GetAnnouncement from '../components/annnouncement/GetAnnouncement';
+import GetAssignment from '../components/assignment/GetAssignment';
 
 const Stream = () => {
   const { classId } = useParams();
@@ -25,17 +26,17 @@ const Stream = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-between items-center p-2">
       {/* Header Section */}
-      <div className="flex justify-between items-center mt-10 w-full max-w-[1000px] px-4">
-        <div className="border-2 rounded-xl border-gray-500 h-[80px] w-[150px] flex flex-col justify-center items-center">
+      <div className="flex justify-between items-center mt-3 w-full max-w-300 gap-2 ">
+        <div className="border-2 rounded-xl border-gray-500 h-[150px] w-[200px] flex flex-col justify-center items-center">
           <h1 className="text-md font-medium">Upcoming</h1>
         </div>
-        <div className="border-2 rounded-xl border-blue-300 h-[90px] w-[500px] flex flex-col justify-center items-center">
+        <div className="border-2 rounded-xl border-gray-200 bg-[#456882] h-[250px] w-full flex flex-col justify-center items-center">
           <h1 className="text-xl font-semibold">Announcements</h1>
         </div>
         <div className="h-[90px] pt-1">
-          <div className="border-2 rounded-xl border-gray-500 h-[60px] w-[150px] flex flex-col justify-center items-center">
+          <div className="border-2 rounded-xl border-gray-500 h-[90px] w-[150px] flex flex-col justify-center items-center">
             <h1 className="text-md font-medium">Class Code</h1>
             <p className="text-sm text-blue-600">{classId}</p>
           </div>
@@ -64,7 +65,8 @@ const Stream = () => {
       </div>
 
       {/* Get announcements (independent component) */}
-            <GetAnnouncement classId={classId} reload={reload} />
+      <GetAnnouncement classId={classId} reload={reload} />
+      <GetAssignment classId={classId} />
     </div>
   );
 };
