@@ -80,3 +80,28 @@ export const getAssignment = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch assignments" });
   }
 };
+
+
+export const getSingleAssignment = async (req, res) => {
+  const { class_id, assignment_id } = req.params;
+
+  try {
+    const [rows] = await db.query(
+      `SELECT a.assignment_id, a.title, a.description, u.name, a.due_date, 
+              a.grading_type, a.allow_late, a.created_at
+       FROM assignment a
+       JOIN user u ON a.posted_by = u.user_id
+       WHERE a.class_id = ? AND a.assignment_id = ?`,
+      [class_id, assignment_id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("DB Error:", error);
+    res.status(500).json({ message: "Failed to fetch assignment" });
+  }
+};
