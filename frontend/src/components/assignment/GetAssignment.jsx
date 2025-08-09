@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { MdOutlineAssignment } from "react-icons/md";
 
 const GetAssignment = () => {
@@ -40,21 +40,22 @@ const GetAssignment = () => {
             ) : (
                 <ul className=" w-250  flex  flex-col justify-center items-baseline-last ">
                     {assignments.map((a) => (
+                        <Link to={`/class/${classId}/assignment/${a.assignment_id}`}>
+                            <li key={a.assignment_id} className="border border-[#456882] p-4 mb-3 w-200 flex items-center gap-2 rounded shadow-md  ">
+                                < MdOutlineAssignment className="text-4xl text-[#16423C]" />
+                                <div className="flex flex-col">
+                                    <p className="font-semibold text-gray-600 flex items-center">
+                                        {a.name} posted a new assignment:  {a.title}
+                                    </p>
 
-                        <li key={a.assignment_id} className="border border-[#456882] p-4 mb-3 w-200 flex items-center gap-2 rounded shadow-md  ">
-                            < MdOutlineAssignment className="text-4xl text-[#16423C]" />
-                            <div className="flex flex-col">
-                                <p className="font-semibold text-gray-600 flex items-center">
-                                    {a.name} posted a new assignment:  {a.title}
-                                </p>
-
-                                <p className="text-sm text-gray-500">
-                                    Posted on: {new Date(a.created_at).toLocaleString()}                                                    
-                                </p>
-                            </div>
-                        </li>
+                                    <p className="text-sm text-gray-500">
+                                        Posted on: {new Date(a.created_at).toLocaleString()}
+                                    </p>
+                                </div>
+                            </li>
+                        </Link>
                     ))}
-                
+
                 </ul>
             )}
         </div>

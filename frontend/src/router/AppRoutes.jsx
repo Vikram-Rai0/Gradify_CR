@@ -23,6 +23,7 @@ import HomePage from '../pages/FrontPage';
 import ForgotPassword from '../pages/userForm/ForgetPassword';
 import CreateClass from '../pages/classroom/CreateClass';
 import JoinClass from '../pages/classroom/joinClass';
+import GetSinglePageAssignment from '../components/assignment/getSinglePageAssignment';
 const AppRoutes = () => {
     return (
         <Routes>
@@ -40,6 +41,8 @@ const AppRoutes = () => {
                 <Route path="/calender" element={<Calander />} />
                 <Route path="/teaching" element={<Teaching />} />
                 <Route path="/settings" element={<Settings />} />
+            <Route path="/getSingleAssignment" element={<GetSinglePageAssignment />} />
+
 
                 {/* Class Routes */}
                 <Route path="classroom/:classId" element={<ClassLayout />}>
@@ -47,6 +50,7 @@ const AppRoutes = () => {
                     <Route path="stream" element={<Stream />} />
                     <Route path="classwork" element={<Classwork />} />
                     <Route path="people" element={<People />} />
+
                 </Route>
             </Route>
 

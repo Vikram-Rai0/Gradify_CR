@@ -7,15 +7,16 @@ const GetSinglePageAssignment = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const { classId } = useParams()
+    const { classId, assignmentId } = useParams();
+
     useEffect(() => {
         if (!classId) return; // Don't fetch if no class selected
 
         setLoading(true);
-        axios
-            .get(`http://localhost:5000/api/classwork/${classId}/getAssignment?limit=20`, {
-                withCredentials: true,
-            })
+        axios.get(`http://localhost:5000/api/classwork/${classId}/getAssignment/${assignmentId}`, {
+
+            withCredentials: true,
+        })
             .then((res) => {
                 setAssignments(res.data);
                 setLoading(false);
@@ -26,7 +27,7 @@ const GetSinglePageAssignment = () => {
                 setLoading(false);
             });
 
-    }, [classId]);
+    }, [assignmentId, classId]);
 
     if (loading) return <p>Loading assignments...</p>;
     if (error) return <p>{error}</p>;
