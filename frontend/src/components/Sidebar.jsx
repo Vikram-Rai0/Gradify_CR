@@ -12,34 +12,53 @@ const Sidebar = ({ isSidebarLocked }) => {
   return (
     <aside
       className={classNames(
-        "group/sidebar bg-gray-100 min-h-screen border-r border-gray-200  transition-all duration-300 ease-in-out overflow-hidden shadow-md",
+        "group/sidebar bg-white min-h-screen border-r border-gray-300 transition-all duration-300 ease-in-out overflow-hidden shadow-lg",
         {
-          "w-65 shadow-2xl": expanded,
+          "w-64 shadow-xl": expanded,
           "w-20": !expanded,
         }
       )}
       onMouseEnter={() => !isSidebarLocked && setIsHovered(true)}
       onMouseLeave={() => !isSidebarLocked && setIsHovered(false)}
     >
-      <ul className="space-y-2 py-6 ">
+      <ul className="space-y-2 py-6">
+        <Link to="/home" className="block">
+          <SidebarItem icon={<MdHome size={26} />} label="Home" expanded={expanded} />
+        </Link>
+        <Link to="/calender" className="block">
+          <SidebarItem icon={<FaRegCalendarAlt size={24} />} label="Calendar" expanded={expanded} />
+        </Link>
 
-        <Link to="/home"> <SidebarItem icon={<MdHome size={24} />} label="Home" expanded={expanded} /></Link>
-        <Link to="/calender">  <SidebarItem icon={<FaRegCalendarAlt size={22} />} label="Calendar" expanded={expanded} /></Link>
-        <hr className="border-gray-300" />
-        <Link to="/teaching"><SidebarItem icon={<FaChalkboardTeacher size={22} />} label="Teaching" expanded={expanded} /></Link>
-        <hr className="border-gray-300" />
-        <Link to="/settings"><SidebarItem icon={<IoMdSettings size={22} />} label="Settings" expanded={expanded} /></Link>
+        <hr className="border-gray-300 mx-4" />
+
+        <Link to="/teaching" className="block">
+          <SidebarItem icon={<FaChalkboardTeacher size={24} />} label="Teaching" expanded={expanded} />
+        </Link>
+
+        <hr className="border-gray-300 mx-4" />
+
+        <Link to="/settings" className="block">
+          <SidebarItem icon={<IoMdSettings size={24} />} label="Settings" expanded={expanded} />
+        </Link>
       </ul>
     </aside>
   );
 };
 
 const SidebarItem = ({ icon, label, expanded }) => (
-  <li className="relative flex items-center gap-4 px-4 py-2 text-gray-700 hover:bg-[#E3F4F4] rounded-r-3xl rounded-l-lg transition-colors duration-300 cursor-pointer group/item">
-    <span className="text-gray-700 flex pl-2.5">{icon}</span>
+  <li
+    className={classNames(
+      "relative flex items-center gap-5 px-5 py-3 text-gray-700 rounded-l-3xl cursor-pointer transition-colors duration-300 hover:bg-teal-100 group/item select-none",
+      {
+        "bg-teal-50 font-semibold text-teal-700": expanded,
+        "hover:text-teal-700": !expanded,
+      }
+    )}
+  >
+    <span className="flex-shrink-0 text-teal-600">{icon}</span>
     <span
       className={classNames(
-        "whitespace-nowrap transition-opacity duration-300 pointer-events-none",
+        "whitespace-nowrap transition-opacity duration-300 pointer-events-none select-none",
         {
           "opacity-100": expanded,
           "opacity-0": !expanded,
@@ -51,7 +70,7 @@ const SidebarItem = ({ icon, label, expanded }) => (
 
     {/* Tooltip for collapsed mode */}
     {!expanded && (
-      <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 text-sm bg-gray-800 text-white rounded shadow-md opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 z-50 whitespace-nowrap">
+      <span className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1 text-sm bg-teal-700 text-white rounded-md shadow-lg opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 z-50 whitespace-nowrap select-none">
         {label}
       </span>
     )}
