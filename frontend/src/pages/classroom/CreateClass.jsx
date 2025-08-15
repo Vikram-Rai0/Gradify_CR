@@ -48,11 +48,6 @@ const CreateClass = () => {
                 return;
             }
 
-            const classIdString = String(class_id);
-
-
-            navigate(`/classroom/${classIdString}/stream`); // Navigate after success
-
             // Reset form
             setData({
                 class_name: "",
@@ -61,6 +56,9 @@ const CreateClass = () => {
                 semester: "",
                 invite_code: ""
             });
+            const classIdString = String(class_id);
+
+            navigate(`/classroom/${classIdString}/stream`); // Navigate after success
 
         } catch (err) {
             console.error("Error creating class: ", err.response?.data || err.message);

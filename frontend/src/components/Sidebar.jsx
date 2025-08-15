@@ -48,14 +48,14 @@ const Sidebar = ({ isSidebarLocked }) => {
 const SidebarItem = ({ icon, label, expanded }) => (
   <li
     className={classNames(
-      "relative flex items-center gap-5 px-5 py-3 text-gray-700 rounded-l-3xl cursor-pointer transition-colors duration-300 hover:bg-teal-100 group/item select-none",
+      "relative flex items-center gap-5 px-5 py-3 text-gray-700 rounded-l-3xl cursor-pointer transition-colors duration-300 hover:bg-[#7ba7cb] group/item select-none",
       {
-        "bg-teal-50 font-semibold text-teal-700": expanded,
-        "hover:text-teal-700": !expanded,
+        "bg-[#e6eff7] font-semibold text-[#E2EFFF]": expanded,
+        "hover:text-[#d8e9fe]": !expanded,
       }
     )}
   >
-    <span className="flex-shrink-0 text-teal-600">{icon}</span>
+    <span className="flex-shrink-0 text-gray-500">{icon}</span>
     <span
       className={classNames(
         "whitespace-nowrap transition-opacity duration-300 pointer-events-none select-none",
@@ -70,7 +70,7 @@ const SidebarItem = ({ icon, label, expanded }) => (
 
     {/* Tooltip for collapsed mode */}
     {!expanded && (
-      <span className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1 text-sm bg-teal-700 text-white rounded-md shadow-lg opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 z-50 whitespace-nowrap select-none">
+      <span className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1 text-sm bg-[#cee4fe] text-white rounded-md shadow-lg opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 z-50 whitespace-nowrap select-none">
         {label}
       </span>
     )}

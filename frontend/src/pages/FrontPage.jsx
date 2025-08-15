@@ -11,8 +11,7 @@ const FrontPage = () => {
                     <nav className="hidden md:flex space-x-6">
                         <a href="/" className="hover:text-blue-500 transition">Home</a>
                         <a href="/classes" className="hover:text-blue-500 transition">Classes</a>
-                        <a href="/assignments" className="hover:text-blue-500 transition">Assignments</a>
-                        <a href="/announcements" className="hover:text-blue-500 transition">Announcements</a>
+                        <a href="/projects" className="hover:text-blue-500 transition">Projects</a>
                     </nav>
                     <div className="space-x-4">
                         <a href="/login" className="text-sm font-medium text-gray-600 hover:text-blue-500 transition">
@@ -33,11 +32,10 @@ const FrontPage = () => {
                 <div className="container mx-auto px-6 py-20 text-center md:text-left flex flex-col md:flex-row items-center md:space-x-10">
                     <div className="md:w-1/2">
                         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                            Simplify Your Project & Class Management
+                            All-in-One Project, Class & Submission Management
                         </h2>
                         <p className="text-lg text-gray-600 mb-8">
-                            Gradify Classroom helps you organize classes, submit projects, review assignments,
-                            and stay updated — all in one place.
+                            Manage classes, track milestones, submit assignments, receive grades, and stay informed — all from a single dashboard.
                         </p>
                         <div className="space-x-4">
                             <a
@@ -56,13 +54,15 @@ const FrontPage = () => {
                     </div>
                     <div className="md:w-1/2 mt-10 md:mt-0">
                         <img
-                            src="/hero-illustration.svg"
+                            src="../../public/output-onlinegiftools.gif"
                             alt="Classroom Illustration"
                             className="w-full max-w-lg mx-auto"
                         />
                     </div>
                 </div>
             </section>
+
+
 
             {/* Features Section */}
             <section className="container mx-auto px-6 py-16">
@@ -91,16 +91,37 @@ const FrontPage = () => {
                             Receive and post important announcements in real-time so everyone stays on track.
                         </p>
                     </div>
+                    <div className="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+                        <img src="/icon-milestones.svg" alt="Milestones" className="h-12 mb-4" />
+                        <h4 className="text-xl font-semibold text-blue-600 mb-3">Weekly Milestone Tracking</h4>
+                        <p className="text-gray-600">
+                            Break large projects into manageable weekly goals and track progress efficiently.
+                        </p>
+                    </div>
+                    <div className="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+                        <img src="/icon-projects.svg" alt="Projects" className="h-12 mb-4" />
+                        <h4 className="text-xl font-semibold text-blue-600 mb-3">Project Submissions</h4>
+                        <p className="text-gray-600">
+                            Submit, review, and collaborate on final-year projects with peer and faculty feedback.
+                        </p>
+                    </div>
+                    <div className="bg-white p-8 rounded-xl shadow hover:shadow-lg transition">
+                        <img src="/icon-grades.svg" alt="Grades" className="h-12 mb-4" />
+                        <h4 className="text-xl font-semibold text-blue-600 mb-3">Grades & Feedback</h4>
+                        <p className="text-gray-600">
+                            View detailed grades, performance reports, and personalized feedback on your work.
+                        </p>
+                    </div>
                 </div>
             </section>
 
             {/* Footer */}
             <footer className="bg-white shadow-inner mt-auto">
-                <div className="container mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
+                <div className="container mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-4 gap-6 text-sm text-gray-600">
                     <div>
                         <h5 className="font-semibold text-gray-900 mb-3">Gradify Classroom</h5>
                         <p>
-                            Your trusted platform for efficient class and project management.
+                            Your trusted platform for efficient class, project, and milestone management.
                         </p>
                     </div>
                     <div>
@@ -108,14 +129,21 @@ const FrontPage = () => {
                         <ul className="space-y-2">
                             <li><a href="/" className="hover:text-blue-500">Home</a></li>
                             <li><a href="/classes" className="hover:text-blue-500">Classes</a></li>
-                            <li><a href="/assignments" className="hover:text-blue-500">Assignments</a></li>
+                            <li><a href="/projects" className="hover:text-blue-500">Projects</a></li>
                             <li><a href="/contact" className="hover:text-blue-500">Contact</a></li>
                         </ul>
                     </div>
                     <div>
+                        <h5 className="font-semibold text-gray-900 mb-3">Resources</h5>
+                        <ul className="space-y-2">
+                            <li><a href="/teacher-guide" className="hover:text-blue-500">Teacher Guide</a></li>
+                            <li><a href="/student-guide" className="hover:text-blue-500">Student Guide</a></li>
+                        </ul>
+                    </div>
+                    <div>
                         <h5 className="font-semibold text-gray-900 mb-3">Contact</h5>
-                        <p>Email: support@gradify.com</p>
-                        <p>Phone: +977-9800000000</p>
+                        <p>Email: gradifyclassroom@gmail.com</p>
+                        <p>Phone: 9810304558</p>
                     </div>
                 </div>
                 <div className="border-t mt-6 pt-4 text-center text-gray-500 text-xs">

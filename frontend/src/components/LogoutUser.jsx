@@ -13,7 +13,7 @@ const LogoutUser = () => {
 
             console.log(res.data); // Should be: { message: "Logged out successfully" }
 
-            navigate("/login");
+            navigate("/");
         } catch (err) {
             console.error("Logout failed", err.response?.data || err.message);
         }
@@ -23,7 +23,7 @@ const LogoutUser = () => {
     return (
         <button
             onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded"
+            className="bg-red-500 text-white px-3 py-1.5 rounded hover:bg-red-600"
         >
             Logout
         </button>

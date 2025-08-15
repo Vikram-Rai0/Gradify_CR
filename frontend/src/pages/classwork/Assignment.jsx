@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { MdFormatListBulleted } from "react-icons/md";
 import ClassWorkNav from "../../components/classwork/CalssWorkNav";
+import { useNavigate } from "react-router-dom";
 
 const Assignment = () => {
   const editorRef = useRef(null);
@@ -71,6 +72,7 @@ const Assignment = () => {
     document.execCommand(command, false, null);
     editorRef.current?.focus();
   };
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     if (!title.trim() || !classId) {
@@ -88,7 +90,6 @@ const Assignment = () => {
     files.forEach((file) => {
       formData.append("attachments", file);
     });
-
     try {
       await axios.post(
         `http://localhost:5000/api/classwork/${classId}/postAssignment`,
@@ -101,13 +102,14 @@ const Assignment = () => {
 
       alert("Assignment created successfully!");
       setTitle("");
-      setClassId("");
+      setClassId("")
       setDueDate("");
       setGradingType("Manual");
       setAllowLate(false);
       setAttachments([]);
       setFiles([]);
       editorRef.current.innerHTML = "";
+      navigate("/stream");
     } catch (error) {
       console.error(error);
       alert("Failed to create assignment.");

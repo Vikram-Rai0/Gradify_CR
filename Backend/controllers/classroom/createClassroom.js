@@ -9,6 +9,7 @@ export const createroom = async (req, res) => {
   if (!req.user || !req.user.id) {
     return res.status(401).json({ error: "Unauthorized: User info missing." });
   }
+
   console.log("req.user:", req.user);
   try {
     const [userRows] = await db.execute(

@@ -153,6 +153,7 @@ const Announcement = forwardRef(
                 minute: "2-digit",
               }),
             });
+
           }
         }
         );

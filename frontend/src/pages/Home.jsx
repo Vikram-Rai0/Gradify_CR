@@ -60,14 +60,14 @@ const GetClasses = () => {
       {classes.length === 0 ? (
         <p className="text-gray-500 text-center">No classes available yet. Join or create one!</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-[85%]">
           {classes.map((cls, index) => {
             const imgSrc = bannerImages[index % bannerImages.length];
             return (
               <div
                 key={cls.class_id || index}
                 onClick={() => handleClassClick(cls.class_id)}
-                className="group cursor-pointer rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 bg-white"
+                className="group cursor-pointer rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 bg-white w-full"
               >
                 {/* Banner */}
                 <div

@@ -17,8 +17,12 @@ export const joinClassroom = async (req, res) => {
     if (classes.length === 0)
       return res.status(404).json({ error: "Invalid invite code" });
 
+    const classData = classes[0];
     const class_id = classes[0].class_id;
 
+    if(classData.instructor_id === user_id){
+      return res.status(403).json({error: "You cannot join your own classroom"});
+    }
     // Check if classroom_members table exists first
     const [existing] = await db.execute(
       `SELECT * FROM classroom_members WHERE user_id = ? AND class_id = ?`,

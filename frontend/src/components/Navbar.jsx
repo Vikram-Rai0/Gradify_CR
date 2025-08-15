@@ -38,7 +38,7 @@ const Navbar = ({ toggleSidebar }) => {
         {/* Left section */}
         <div className="flex items-center gap-4">
           <FaBars
-            className="text-lg cursor-pointer text-gray-700 hover:text-green-600 transition"
+            className="text-lg cursor-pointer text-gray-700 hover:text-blue-500 transition"
             onClick={toggleSidebar}
           />
           <div
@@ -46,17 +46,17 @@ const Navbar = ({ toggleSidebar }) => {
             onClick={() => navigate("/home")}
           >
             <SiGoogleclassroom className="text-2xl text-green-600" />
-            <span className="text-xl font-semibold text-gray-800">
+            <span className="text-xl font-semibold text-blue-700">
               Classroom
             </span>
           </div>
         </div>
 
-        {/* Right section */}
+
         <div className="flex items-center gap-6">
           <LogoutUser />
 
-          {/* Add button */}
+
           <div className="relative">
             <button
               onClick={toggleOpen}
@@ -65,7 +65,7 @@ const Navbar = ({ toggleSidebar }) => {
               <IoIosAdd className="text-3xl text-gray-700" />
             </button>
 
-            {/* Dropdown */}
+
             {isOpen && (
               <div
                 ref={popupRef}
@@ -87,7 +87,7 @@ const Navbar = ({ toggleSidebar }) => {
             )}
           </div>
 
-          {/* User profile placeholder */}
+
           <div className="h-10 w-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold cursor-pointer">
             U
           </div>
