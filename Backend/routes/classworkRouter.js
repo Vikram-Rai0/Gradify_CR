@@ -18,8 +18,9 @@ classworkRouter.post(
 );
 
 classworkRouter.get("/:class_id/getAssignment", verifyToken, getAssignment);
+
 classworkRouter.get(
-  "/:class_id/getAssignment/:assignment_id",
+  "/:class_id/getAssignment/:assign_id",
   verifyToken,
   getSingleAssignment
 );

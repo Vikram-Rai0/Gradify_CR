@@ -28,9 +28,9 @@ export const postAssignment = async (req, res) => {
         description,
         due_date,
         grading_type,
-        allowLateValue,                                 
-      ]                                         
-    );              
+        allowLateValue,
+      ]
+    );
 
     const assignmentId = assignmentResult.insertId;
 
@@ -65,7 +65,7 @@ export const getAssignment = async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      `SELECT a.title, a.description, u.name, a.due_date, a.grading_type, a.allow_late, a.created_at
+      `SELECT a.assign_id ,a.title, a.description, u.name, a.due_date, a.grading_type, a.allow_late, a.created_at
        FROM assignment a
        JOIN user u ON a.posted_by = u.user_id
        WHERE a.class_id = ?
@@ -81,18 +81,17 @@ export const getAssignment = async (req, res) => {
   }
 };
 
-
 export const getSingleAssignment = async (req, res) => {
-  const { class_id, assignment_id } = req.params;
+  const { class_id, assign_id } = req.params;
 
   try {
     const [rows] = await db.query(
-      `SELECT a.assignment_id, a.title, a.description, u.name, a.due_date, 
+      `SELECT a.assign_id, a.title, a.description, u.name, a.due_date, 
               a.grading_type, a.allow_late, a.created_at
        FROM assignment a
        JOIN user u ON a.posted_by = u.user_id
-       WHERE a.class_id = ? AND a.assignment_id = ?`,
-      [class_id, assignment_id]
+       WHERE a.class_id = ? AND a.assign_id = ?`,
+      [class_id, assign_id]
     );
 
     if (rows.length === 0) {
