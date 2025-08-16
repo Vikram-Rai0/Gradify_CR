@@ -23,7 +23,7 @@ import HomePage from '../pages/FrontPage';
 import ForgotPassword from '../pages/userForm/ForgetPassword';
 import CreateClass from '../pages/classroom/CreateClass';
 import JoinClass from '../pages/classroom/joinClass';
-import GetSinglePageAssignment from '../components/assignment/getSinglePageAssignment';
+import GetSinglePageAssignment from '../components/assignment/GetSinglePageAssignment';
 const AppRoutes = () => {
     return (
         <Routes>
@@ -41,7 +41,6 @@ const AppRoutes = () => {
                 <Route path="/calender" element={<Calander />} />
                 <Route path="/teaching" element={<Teaching />} />
                 <Route path="/settings" element={<Settings />} />
-            <Route path="/getSingleAssignment" element={<GetSinglePageAssignment />} />
 
 
                 {/* Class Routes */}
@@ -56,6 +55,7 @@ const AppRoutes = () => {
 
             <Route path="/classroom/:classId/classwork" element={<Classwork />} />
             <Route path="/classroom/:classId/classwork/assignment" element={<Assignment />} />
+            <Route path="/classroom/:classId/assignment/:assignId" element={<GetSinglePageAssignment />} />
             <Route path="/classroom/:classId/classwork/quiz" element={<Quiz_assignment />} />
             <Route path="/classroom/:classId/classwork/question" element={<Question />} />
             <Route path="/classroom/:classId/classwork/material" element={<Material />} />
