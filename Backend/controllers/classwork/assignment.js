@@ -5,7 +5,7 @@ export const postAssignment = async (req, res) => {
   const posted_by = req.user?.id;
 
   // Extract text fields
-  const { title, description, due_date, grading_type, allow_late } = req.body;
+  const { title, description, due_date, points, allow_late } = req.body;
 
   // Get uploaded files
   const attachments = req.files?.attachments || [];
@@ -19,7 +19,7 @@ export const postAssignment = async (req, res) => {
     // Fix: Added missing comma between posted_by and title in columns list
     const [assignmentResult] = await connection.query(
       `INSERT INTO assignment 
-      (class_id, posted_by, title, description, due_date, grading_type, allow_late)
+      (class_id, posted_by, title, description, due_date, points, allow_late)
       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         classId,
@@ -27,7 +27,7 @@ export const postAssignment = async (req, res) => {
         title,
         description,
         due_date,
-        grading_type,
+        points_type,
         allowLateValue,
       ]
     );
@@ -65,7 +65,7 @@ export const getAssignment = async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      `SELECT a.assign_id ,a.title, a.description, u.name, a.due_date, a.grading_type, a.allow_late, a.created_at
+      `SELECT a.assign_id ,a.title, a.description, u.name, a.due_date, a.points, a.allow_late, a.created_at
        FROM assignment a
        JOIN user u ON a.posted_by = u.user_id
        WHERE a.class_id = ?
@@ -87,7 +87,7 @@ export const getSingleAssignment = async (req, res) => {
   try {
     const [rows] = await db.query(
       `SELECT a.assign_id, a.title, a.description, u.name, a.due_date, 
-              a.grading_type, a.allow_late, a.created_at
+              a.points, a.allow_late, a.created_at
        FROM assignment a
        JOIN user u ON a.posted_by = u.user_id
        WHERE a.class_id = ? AND a.assign_id = ?`,
@@ -104,3 +104,7 @@ export const getSingleAssignment = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch assignment" });
   }
 };
+
+
+
+
