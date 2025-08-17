@@ -41,6 +41,8 @@ const AppRoutes = () => {
                 <Route path="/calender" element={<Calander />} />
                 <Route path="/teaching" element={<Teaching />} />
                 <Route path="/settings" element={<Settings />} />
+            <Route path="/classroom/:classId/assignment/:assignId" element={<GetSinglePageAssignment />} />
+
 
 
                 {/* Class Routes */}
@@ -50,12 +52,12 @@ const AppRoutes = () => {
                     <Route path="classwork" element={<Classwork />} />
                     <Route path="people" element={<People />} />
 
+
                 </Route>
             </Route>
 
             <Route path="/classroom/:classId/classwork" element={<Classwork />} />
             <Route path="/classroom/:classId/classwork/assignment" element={<Assignment />} />
-            <Route path="/classroom/:classId/assignment/:assignId" element={<GetSinglePageAssignment />} />
             <Route path="/classroom/:classId/classwork/quiz" element={<Quiz_assignment />} />
             <Route path="/classroom/:classId/classwork/question" element={<Question />} />
             <Route path="/classroom/:classId/classwork/material" element={<Material />} />

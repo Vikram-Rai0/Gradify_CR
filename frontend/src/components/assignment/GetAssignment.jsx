@@ -18,10 +18,13 @@ const GetAssignment = () => {
                 withCredentials: true,
             })
             .then((res) => {
+
                 console.log(res.data);
                 setAssignments(res.data);
                 setLoading(false);
             })
+
+            
             .catch((err) => {
                 console.error("Failed to load assignments:", err);
                 setError("Failed to load assignments.");

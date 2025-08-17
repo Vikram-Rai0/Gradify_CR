@@ -212,17 +212,16 @@ const UserForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 rounded-lg font-semibold text-white shadow-md transition-all duration-300 ${
-                loading
+              className={`w-full py-2 rounded-lg font-semibold text-white shadow-md transition-all duration-300 ${loading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
-              }`}
+                }`}
             >
               {loading
                 ? "Processing..."
                 : isSignUp
-                ? "Sign Up"
-                : "Login"}
+                  ? "Sign Up"
+                  : "Login"}
             </button>
 
             <p className="text-center text-sm text-gray-600 mt-3">

@@ -21,7 +21,7 @@ const Assignment = () => {
   const [title, setTitle] = useState("");
   const [classId, setClassId] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [gradingType, setGradingType] = useState("Manual");
+  const [points, setPoints] = useState(null);
   const [allowLate, setAllowLate] = useState(false);
   const [classList, setClassList] = useState([]);
   const [files, setFiles] = useState([]);
@@ -84,7 +84,7 @@ const Assignment = () => {
     formData.append("title", title);
     formData.append("description", editorRef.current?.innerHTML);
     formData.append("due_date", dueDate);
-    formData.append("grading_type", gradingType);
+    formData.append("points", points);
     formData.append("allow_late", allowLate);
 
     files.forEach((file) => {
@@ -104,7 +104,7 @@ const Assignment = () => {
       setTitle("");
       setClassId("")
       setDueDate("");
-      setGradingType("Manual");
+      setPoints(100);
       setAllowLate(false);
       setAttachments([]);
       setFiles([]);
@@ -290,15 +290,15 @@ const Assignment = () => {
             </div>
 
             <div>
-              <label className="font-semibold text-gray-600">Grading Type</label>
-              <select
+              <label className="font-semibold text-gray-600">Points</label>
+              <div
                 className="w-full bg-gray-50 h-12 rounded-md border border-gray-200 px-2 mt-1"
-                value={gradingType}
-                onChange={(e) => setGradingType(e.target.value)}
+                value={points}
+                onChange={(e) => setPoints(e.target.value)}
               >
-                <option value="Manual">Manual</option>
-                <option value="Auto">Auto</option>
-              </select>
+                <input type="text" />
+              </div>
+
             </div>
 
             <div className="flex items-center gap-2">
