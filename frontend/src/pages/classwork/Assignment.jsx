@@ -84,7 +84,8 @@ const Assignment = () => {
     formData.append("title", title);
     formData.append("description", editorRef.current?.innerHTML);
     formData.append("due_date", dueDate);
-    formData.append("points", points);
+    formData.append("points", Number(points));
+
     formData.append("allow_late", allowLate);
 
     files.forEach((file) => {
@@ -109,7 +110,9 @@ const Assignment = () => {
       setAttachments([]);
       setFiles([]);
       editorRef.current.innerHTML = "";
-      navigate("/stream");
+
+      navigate(`/classroom/${classId}/stream`);
+
     } catch (error) {
       console.error(error);
       alert("Failed to create assignment.");
@@ -291,13 +294,14 @@ const Assignment = () => {
 
             <div>
               <label className="font-semibold text-gray-600">Points</label>
-              <div
+              <input
+                type="number"
                 className="w-full bg-gray-50 h-12 rounded-md border border-gray-200 px-2 mt-1"
-                value={points}
-                onChange={(e) => setPoints(e.target.value)}
-              >
-                <input type="text" />
-              </div>
+                value={points || ""}
+                onChange={(e) => setPoints(Number(e.target.value))}
+              />
+
+
 
             </div>
 
