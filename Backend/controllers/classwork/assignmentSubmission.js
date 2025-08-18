@@ -44,10 +44,10 @@ export const submitAssignment = async (req, res) => {
 
     const studentId = req.user.id;
     const { comment } = req.body;
-   const fileUrl = req.files && req.files.length
-  ? `/uploads/submissions/${req.files[0].filename}`
-  : null;
-
+    const fileUrl =
+      req.files && req.files.length
+        ? `/uploads/submissions/${req.files[0].filename}`
+        : null;
 
     // 1) Verify assignment
     const [aRows] = await conn.query(
@@ -68,7 +68,7 @@ export const submitAssignment = async (req, res) => {
         .json({ message: "Late submissions are not allowed" });
     }
 
-    // 3) Upsert submission 
+    // 3) Upsert submission
     await conn.beginTransaction();
     const [existing] = await conn.query(
       "SELECT submission_id FROM assignmentsubmission WHERE assign_id = ? AND student_id = ?",
@@ -91,7 +91,7 @@ export const submitAssignment = async (req, res) => {
     }
 
     await conn.commit();
-    res.json({ message: "Submission saved successfully!" });
+   return res.json({ message: "Submission saved successfully!" });
   } catch (e) {
     console.error(e);
     try {

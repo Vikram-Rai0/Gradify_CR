@@ -7,6 +7,7 @@ import {
 import { submitAssignment } from "../controllers/classwork/assignmentSubmission.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 import multer from "multer";
+import { getAssignUser } from "../controllers/classwork/studentWrok.js";
 
 const upload = multer({ dest: "uploads/assignments/" });
 const classworkRouter = express.Router();
@@ -33,4 +34,6 @@ classworkRouter.post(
   upload.array("attachments"), // multiple files
   submitAssignment
 );
+
+classworkRouter.get("/:classId/submitAssignment/:assignId",verifyToken,getAssignUser);
 export default classworkRouter;
