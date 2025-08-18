@@ -21,15 +21,7 @@ export const postAssignment = async (req, res) => {
       `INSERT INTO assignment 
       (class_id, posted_by, title, description, due_date, points, allow_late)
       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        classId,
-        posted_by,
-        title,
-        description,
-        due_date,
-        points_type,
-        allowLateValue,
-      ]
+      [classId, posted_by, title, description, due_date, points, allowLateValue]
     );
 
     const assignmentId = assignmentResult.insertId;
@@ -104,7 +96,3 @@ export const getSingleAssignment = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch assignment" });
   }
 };
-
-
-
-

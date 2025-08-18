@@ -4,6 +4,7 @@ import {
   getAssignment,
   getSingleAssignment,
 } from "../controllers/classwork/assignment.js";
+import { submitAssignment } from "../controllers/classwork/assignmentSubmission.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 import multer from "multer";
 
@@ -25,4 +26,11 @@ classworkRouter.get(
   getSingleAssignment
 );
 
+// POST /api/classwork/:class_id/submitAssignment/:assign_id
+classworkRouter.post(
+  "/:classId/submitAssignment/:assignId",
+  verifyToken,
+  upload.array("attachments"), // multiple files
+  submitAssignment
+);
 export default classworkRouter;
