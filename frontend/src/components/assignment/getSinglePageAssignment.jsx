@@ -11,6 +11,8 @@ const GetSinglePageAssignment = () => {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [user, setUser] = useState(null);
+  const [success, setSuccess] = useState(null);
+
 
   const { classId, assignId } = useParams();
   const navigate = useNavigate();
@@ -54,7 +56,7 @@ const GetSinglePageAssignment = () => {
         formData,
         { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
-      alert("Assignment submitted successfully!");
+      setSuccess("Assignment submitted successfully!");
       setFile(null);
       setComment("");
     } catch (err) {
@@ -71,8 +73,7 @@ const GetSinglePageAssignment = () => {
 
   return (
     <div className="flex flex-col lg:flex-row justify-center items-start mt-10 px-4 gap-6 max-w-7xl mx-auto">
-      {/* Assignment Info */}
-      <div className="bg-white shadow-lg rounded-2xl w-full lg:w-2/3 p-6 border border-gray-100">
+      <div className="bg-white shadow-lg rounded-2xl w-full lg:w-2/3 p-6 border border-gray-100 ">
         <div className="flex items-start justify-between border-b pb-4 mb-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{assignment.title}</h1>
@@ -138,9 +139,9 @@ const GetSinglePageAssignment = () => {
             onChange={(e) => setComment(e.target.value)}
           />
         </div>
-
+          <p className="text-green-500 text-center text-sm ">{success}</p>
         {/* Actions */}
-        <div className="flex justify-end gap-3 mt-2">
+        <div className="flex justify-end gap-3 ">
           <button
             onClick={() => navigate(-1)}
             className="px-5 py-2 rounded-xl bg-gray-200 text-gray-700 hover:bg-gray-300 transition font-medium"
@@ -155,6 +156,7 @@ const GetSinglePageAssignment = () => {
             {submitting ? "Submitting..." : "Submit Assignment"}
           </button>
         </div>
+
       </div>
     </div>
   );

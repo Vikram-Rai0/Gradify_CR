@@ -213,8 +213,8 @@ const UserForm = () => {
               type="submit"
               disabled={loading}
               className={`w-full py-2 rounded-lg font-semibold text-white shadow-md transition-all duration-300 ${loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
                 }`}
             >
               {loading

@@ -24,6 +24,7 @@ import ForgotPassword from '../pages/userForm/ForgetPassword';
 import CreateClass from '../pages/classroom/CreateClass';
 import JoinClass from '../pages/classroom/joinClass';
 import GetSinglePageAssignment from '../components/assignment/GetSinglePageAssignment';
+import AssignmentUsers from '../components/assignment/StudentWork';
 const AppRoutes = () => {
     return (
         <Routes>
@@ -42,6 +43,7 @@ const AppRoutes = () => {
                 <Route path="/teaching" element={<Teaching />} />
                 <Route path="/settings" element={<Settings />} />
             <Route path="/classroom/:classId/assignment/:assignId" element={<GetSinglePageAssignment />} />
+            <Route path="/classroom/:classId/assignment/:assignId/studentWork" element={<AssignmentUsers />} />
 
 
 
