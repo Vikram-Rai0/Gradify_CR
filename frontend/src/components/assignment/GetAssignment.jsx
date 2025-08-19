@@ -7,9 +7,17 @@ const GetAssignment = () => {
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [user, setUser] = useState(null);
 
     const { classId } = useParams()
     useEffect(() => {
+        axios.get(`http://localhost:5000/api/user/me`, {
+            withCredentials: true,
+        })
+            .then((res) => {
+                console.log(res.data);
+                setUser(res.data);
+            })
         if (!classId) return; // Don't fetch if no class selected
 
         setLoading(true);
@@ -24,7 +32,7 @@ const GetAssignment = () => {
                 setLoading(false);
             })
 
-            
+
             .catch((err) => {
                 console.error("Failed to load assignments:", err);
                 setError("Failed to load assignments.");
@@ -33,8 +41,10 @@ const GetAssignment = () => {
 
     }, [classId]);
 
+
     if (loading) return <p>Loading assignments...</p>;
     if (error) return <p>{error}</p>;
+
 
     return (
         <div>
@@ -42,22 +52,29 @@ const GetAssignment = () => {
                 <p>No assignments found.</p>
             ) : (
                 <ul className=" w-full  flex  flex-col justify-center items-baseline-last ">
-                    {assignments.map((a) => (
-                        <Link to={ user.role === "instructor"`/classroom/${classId}/assignment/${a.assign_id}`}>
-                            <li key={a.assignment_id} className="border border-[#456882] p-4 mb-3 w-200 flex items-center gap-2 rounded-md shadow-md bg-gradient-to-r from-[#224a66] to-[#507896] hover:from-[#456882] hover:to-[#1B3C53]">
-                                      < MdOutlineAssignment className="text-4xl text-[#009689]" />
-                                <div className="flex flex-col">
-                                    <p className="font-semibold text-white flex items-center">
-                                        {a.name} posted a new assignment:  {a.title}
-                                    </p>
+                    {assignments.map((a) => {
+                        const linkPath =
+                            user?.role === "Instructor"
+                                ? `/classroom/${classId}/assignment/${a.assign_id}/studentWork`
+                                : `/classroom/${classId}/assignment/${a.assign_id}`;
+                        return (
 
-                                    <p className="text-sm text-gray-300">
-                                        Posted on: {new Date(a.created_at).toLocaleString()}
-                                    </p>
-                                </div>
-                            </li>
-                        </Link>
-                    ))}
+                            <Link to={linkPath}>
+                                <li key={a.assignment_id} className="border border-[#456882] p-4 mb-3 w-200 flex items-center gap-2 rounded-md shadow-md bg-gradient-to-r from-[#224a66] to-[#507896] hover:from-[#456882] hover:to-[#1B3C53]">
+                                    < MdOutlineAssignment className="text-4xl text-[#009689]" />
+                                    <div className="flex flex-col">
+                                        <p className="font-semibold text-white flex items-center">
+                                            {a.name} posted a new assignment:  {a.title}
+                                        </p>
+
+                                        <p className="text-sm text-gray-300">
+                                            Posted on: {new Date(a.created_at).toLocaleString()}
+                                        </p>
+                                    </div>
+                                </li>
+                            </Link>
+                        )
+                    })}
 
                 </ul>
             )}

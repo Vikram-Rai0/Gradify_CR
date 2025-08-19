@@ -3,7 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { Calendar, Clock, CheckCircle, Upload, MessageSquare } from "lucide-react";
 
-const GetSinglePageAssignment = () => {
+const GetSinglePageAssignment = ({showSubmission=true}) => {
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -118,7 +118,7 @@ const GetSinglePageAssignment = () => {
       </div>
 
       {/* Submission Section */}
-      <div className="bg-white shadow-lg rounded-2xl w-full lg:w-1/3 p-6 border border-gray-100 flex flex-col gap-5">
+     {showSubmission && <div className="bg-white shadow-lg rounded-2xl w-full lg:w-1/3 p-6 border border-gray-100 flex flex-col gap-5">
         <h2 className="text-xl font-semibold text-gray-800">Submit Your Work</h2>
 
         {/* File Upload */}
@@ -158,6 +158,7 @@ const GetSinglePageAssignment = () => {
         </div>
 
       </div>
+}
     </div>
   );
 };
