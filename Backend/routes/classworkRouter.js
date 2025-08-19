@@ -35,5 +35,9 @@ classworkRouter.post(
   submitAssignment
 );
 
-classworkRouter.get("/:classId/submitAssignment/:assignId",verifyToken,getAssignUser);
+classworkRouter.get(
+  "/:classId/assignment/:assignId/assignUser",
+  verifyToken,
+  getAssignUser
+);
 export default classworkRouter;
