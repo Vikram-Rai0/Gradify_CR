@@ -1,4 +1,5 @@
 import db from "../../config/db.js";
+
 // Get single assignment
 export const getAssignment = async (req, res) => {
   try {
@@ -16,7 +17,7 @@ export const getAssignment = async (req, res) => {
   }
 };
 
-// Get student's submission
+// controllers/classwork/assignmentSubmission.js
 export const getMySubmission = async (req, res) => {
   try {
     const { assignId } = req.params;
@@ -36,12 +37,12 @@ export const getMySubmission = async (req, res) => {
   }
 };
 
+
 // Submit or update assignment
 export const submitAssignment = async (req, res) => {
   const conn = await db.getConnection();
   try {
     const { classId, assignId } = req.params;
-
     const studentId = req.user.id;
     const { comment } = req.body;
     const fileUrl =
@@ -91,12 +92,84 @@ export const submitAssignment = async (req, res) => {
     }
 
     await conn.commit();
-   return res.json({ message: "Submission saved successfully!" });
+    return res.json({ message: "Submission saved successfully!" });
   } catch (e) {
     console.error(e);
     try {
       await conn.rollback();
-    } catch {}
+    } catch (rollbackErr) {
+      console.error("Rollback failed:", rollbackErr);
+    }
+    res.status(500).json({ message: "Server error" });
+  } finally {
+    conn.release();
+  }
+};
+
+// Unsubmit assignment
+export const unsubmitAssignment = async (req, res) => {
+  const conn = await db.getConnection();
+  try {
+    const { classId, assignId } = req.params;
+    const studentId = req.user.id;
+
+    // 1) Verify assignment exists
+    const [aRows] = await conn.query(
+      "SELECT assign_id, due_date, allow_late FROM assignment WHERE assign_id = ? AND class_id = ?",
+      [assignId, classId]
+    );
+
+    if (!aRows.length) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    const assignment = aRows[0];
+
+    // 2) Check late submission rules
+    const now = new Date();
+    const due = assignment.due_date ? new Date(assignment.due_date) : null;
+    if (due && now > due && !assignment.allow_late) {
+      return res.status(400).json({
+        message:
+          "Cannot unsubmit after due date (late submissions not allowed)",
+      });
+    }
+
+    // 3) Start transaction
+    await conn.beginTransaction();
+
+    // 4) Verify submission exists
+    const [existing] = await conn.query(
+      "SELECT submission_id, file_url FROM assignmentsubmission WHERE assign_id = ? AND student_id = ?",
+      [assignId, studentId]
+    );
+
+    if (!existing.length) {
+      await conn.rollback();
+      return res
+        .status(404)
+        .json({ message: "No submission found to unsubmit" });
+    }
+
+    // 5) Optional: Delete the uploaded file from storage
+    // You would need to implement this based on your file storage system
+
+    // 6) Delete submission
+    await conn.query(
+      "DELETE FROM assignmentsubmission WHERE submission_id = ?",
+      [existing[0].submission_id]
+    );
+
+    // 7) Commit transaction
+    await conn.commit();
+    return res.json({ message: "Submission removed successfully!" });
+  } catch (e) {
+    console.error(e);
+    try {
+      await conn.rollback();
+    } catch (rollbackErr) {
+      console.error("Rollback failed:", rollbackErr);
+    }
     res.status(500).json({ message: "Server error" });
   } finally {
     conn.release();

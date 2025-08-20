@@ -4,7 +4,11 @@ import {
   getAssignment,
   getSingleAssignment,
 } from "../controllers/classwork/assignment.js";
-import { submitAssignment } from "../controllers/classwork/assignmentSubmission.js";
+import {
+  submitAssignment,
+  getMySubmission,
+  unsubmitAssignment,
+} from "../controllers/classwork/assignmentSubmission.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 import multer from "multer";
 import { getAssignUser } from "../controllers/classwork/studentWrok.js";
@@ -27,7 +31,6 @@ classworkRouter.get(
   getSingleAssignment
 );
 
-// POST /api/classwork/:class_id/submitAssignment/:assign_id
 classworkRouter.post(
   "/:classId/submitAssignment/:assignId",
   verifyToken,
@@ -40,4 +43,17 @@ classworkRouter.get(
   verifyToken,
   getAssignUser
 );
+
+classworkRouter.get(
+  "/:classId/assignment/:assignId/getmySubmission",
+  verifyToken,
+  getMySubmission
+);
+
+classworkRouter.delete(
+  "/:classId/unsubmitAssignment/:assignId",
+  verifyToken,
+  unsubmitAssignment
+);
+
 export default classworkRouter;
