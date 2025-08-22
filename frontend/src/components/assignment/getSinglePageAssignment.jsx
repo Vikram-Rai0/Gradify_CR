@@ -77,6 +77,7 @@ const GetSinglePageAssignment = ({ showSubmission = true }) => {
         { withCredentials: true }
       );
       setSubmissionData(subRes.data);
+
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || "Failed to submit assignment.");
@@ -229,17 +230,16 @@ const GetSinglePageAssignment = ({ showSubmission = true }) => {
                 <div className="space-y-2">
                   <h3 className="text-sm font-semibold text-gray-800">Feedback History</h3>
                   {feedback.map((fb, index) => (
-                    <div key={index} className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                      <div className="flex justify-between items-start mb-2">
+                    <div key={index} className="p-2 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex justify-between items-start ">
                         <span className="text-xs text-gray-600">From: {fb.instructor_name}</span>
                         <span className="text-xs text-gray-600">{new Date(fb.created_at).toLocaleDateString()}</span>
                       </div>
                       {fb.feedback && (
-                        <p className="text-blue-900 text-sm mb-2">{fb.feedback}</p>
+                        <p className="text-blue-900 text-sm ">{fb.feedback}</p>
                       )}
-                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                        fb.status === 'accept' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${fb.status === 'accept' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
                         {fb.status === 'accept' ? 'Accepted' : 'Resubmission Required'}
                       </span>
                     </div>
@@ -282,17 +282,7 @@ const GetSinglePageAssignment = ({ showSubmission = true }) => {
 
               {/* Action Buttons */}
               <div className="flex justify-between gap-3">
-                {canResubmit || submission.status === "resubmit" ? (
-                  // Show resubmit option
-                  <button
-                    onClick={handleResubmit}
-                    className="flex-1 px-4 py-2 rounded-xl bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition font-medium flex items-center justify-center gap-2"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Resubmit Assignment
-                  </button>
-                ) : submission.status === "pending" ? (
-                  // Show unsubmit option for pending submissions
+                {(submission.status === "pending" || submission.status === "resubmit") ? (
                   <button
                     onClick={handleUnsubmitAssignment}
                     disabled={unsubmitting}
@@ -301,7 +291,16 @@ const GetSinglePageAssignment = ({ showSubmission = true }) => {
                     <Trash2 className="w-4 h-4" />
                     {unsubmitting ? "Unsubmitting..." : "Unsubmit"}
                   </button>
+                ) : canResubmit ? (
+                  <button
+                    onClick={handleResubmit}
+                    className="flex-1 px-4 py-2 rounded-xl bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition font-medium flex items-center justify-center gap-2"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Resubmit Assignment
+                  </button>
                 ) : null}
+
               </div>
             </div>
           ) : (

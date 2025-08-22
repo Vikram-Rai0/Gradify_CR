@@ -18,7 +18,7 @@ const AssignmentUsers = () => {
   const fetchUsers = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/classwork/${classId}/assignment/${assignId}/assignUser`,
+        `http://localhost:5000/api/classwork/assignment/${assignId}/assignUser`,
         { withCredentials: true }
       );
 
@@ -70,6 +70,7 @@ const AssignmentUsers = () => {
   }, [showFeedback]);
 
   const handleAction = async (studentId, action) => {
+    // Only require feedback for resubmit
     if (action === "resubmit" && (!feedback[studentId] || feedback[studentId].trim() === "")) {
       alert("Please enter feedback before requesting resubmission.");
       return;
@@ -195,7 +196,7 @@ const AssignmentUsers = () => {
                 <div className="flex justify-between items-center mb-2">
                   <div>
                     <p className="font-medium text-gray-800 text-sm">{student.student_name}</p>
-                    <p className="text-gray-500 text-xs">{student.student_email}</p>
+                    {/* <p className="text-gray-500 text-xs">{student.student_email}</p> */}
                     {student.lastSubmitted && (
                       <p className="text-gray-500 text-xs">
                         {student.attempt_no > 1 && `Attempt ${student.attempt_no} - `}
@@ -220,12 +221,16 @@ const AssignmentUsers = () => {
 
                 {/* Show existing feedback if any */}
                 {student.latest_feedback && !showFeedback[student.student_id] && (
-                  <div className="mt-2 p-2 bg-blue-50 rounded text-xs text-gray-700 border-l-2 border-blue-300">
-                    <div className="flex items-center gap-1 mb-1">
-                      <MessageSquare className="w-3 h-3" />
-                      <strong>Latest feedback:</strong>
+                  <div className="mt-2 p-2 flex  justify-between bg-blue-50 rounded text-xs text-gray-700 border-l-2 border-blue-300">
+                    <div className="flex flex-col  gap-1 mb-1">
+
+                      <div className="flex items-center gap-1">
+                        <MessageSquare className="w-3 h-3 mt-1" />
+                        <strong> Latest feedback:</strong>
+                      </div>
+
+                      <p className="ml-4">{student.latest_feedback}</p>
                     </div>
-                    <p>{student.latest_feedback}</p>
                     {student.feedback_date && (
                       <p className="text-gray-500 text-xs mt-1">
                         {new Date(student.feedback_date).toLocaleDateString()}
@@ -279,6 +284,14 @@ const AssignmentUsers = () => {
                         />
                         <div className="flex gap-2 mt-1">
                           <button
+                            onClick={() => handleAction(student.student_id, "accept")}
+                            disabled={processing[student.student_id]}
+                            className="flex-1 py-1 text-sm rounded text-white bg-green-600 hover:bg-green-700 transition disabled:opacity-50 flex items-center justify-center gap-1"
+                          >
+                            <CheckCircle className="w-3 h-3" />
+                            {processing[student.student_id] ? "Processing..." : "Accept"}
+                          </button>
+                          <button
                             onClick={() => handleAction(student.student_id, "resubmit")}
                             disabled={processing[student.student_id]}
                             className="flex-1 py-1 text-sm rounded text-white bg-red-600 hover:bg-red-700 transition disabled:opacity-50 flex items-center justify-center gap-1"
@@ -299,15 +312,41 @@ const AssignmentUsers = () => {
                     )}
 
                     {!showFeedback[student.student_id] && (
-                      <button
-                        onClick={() =>
-                          setShowFeedback((prev) => ({ ...prev, [student.student_id]: true }))
-                        }
-                        className="mt-2 w-full py-1 text-sm rounded text-white bg-red-600 hover:bg-red-700 flex items-center justify-center gap-1"
-                      >
-                        <RefreshCw className="w-3 h-3" />
-                        Request Resubmit
-                      </button>
+                      <div className="flex gap-2 mt-2">
+                        <button
+                          onClick={() => handleAction(student.student_id, "accept")}
+                          disabled={
+                            processing[student.student_id] || student.submission_status === "accept"
+                          }
+                          className={`flex-1 py-1 text-sm rounded text-white flex items-center justify-center gap-1
+    ${student.submission_status === "accept"
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-blue-600 hover:bg-blue-700"}`}
+                        >
+                          <CheckCircle className="w-3 h-3" />
+                          {processing[student.student_id] ? "Processing..." : "Accept"}
+                        </button>
+
+                        {/* Request Resubmit Button */}
+                        <button
+                          onClick={() => {
+                            if (student.submission_status !== "resubmit") {
+                              setShowFeedback((prev) => ({ ...prev, [student.student_id]: true }));
+                            }
+                          }}
+                          disabled={
+                            processing[student.student_id] || student.submission_status === "resubmit"
+                          }
+                          className={`flex-1 py-1 text-sm rounded text-white flex items-center justify-center gap-1
+    ${student.submission_status === "resubmit"
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-red-600 hover:bg-red-700"}`}
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                          Request Resubmit
+                        </button>
+
+                      </div>
                     )}
                   </>
                 )}
