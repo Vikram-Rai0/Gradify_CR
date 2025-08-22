@@ -232,10 +232,21 @@ const AssignmentUsers = () => {
                       <p className="ml-4">{student.latest_feedback}</p>
                     </div>
                     {student.feedback_date && (
-                      <p className="text-gray-500 text-xs mt-1">
+                      <p className="text-gray-500 text-sm mt-1">
                         {new Date(student.feedback_date).toLocaleDateString()}
                       </p>
                     )}
+                  </div>
+                )}
+
+                {/* Display submission content */}
+                {student.content && (
+                  <div className=" rounded-lg text-sm text-gray-800 whitespace-pre-wrap ">
+                    <div className="flex items-center mb-1 text-gray-600 text-xs font-medium">
+                      <FileText className="w-4 h-4 mr-1" />
+                      Submission Content
+                    </div>
+                    <div className="text-gray-700 "><p className="text-sm text-gray-600">{student.content}</p></div>
                   </div>
                 )}
 
