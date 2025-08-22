@@ -10,11 +10,11 @@ import {
   getMySubmission,
   unsubmitAssignment,
 } from "../controllers/classwork/assignmentSubmission.js";
-import { 
+import {
   getAssignUser,
   getStudentSubmission,
   handleAssignmentAction,
-  handleBulkAction
+  handleBulkAction,
 } from "../controllers/classwork/studentWork.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 import multer from "multer";
@@ -22,15 +22,22 @@ import multer from "multer";
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/submissions/');
+    cb(null, "uploads/submissions/");
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.originalname.split('.').pop());
-  }
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname +
+        "-" +
+        uniqueSuffix +
+        "." +
+        file.originalname.split(".").pop()
+    );
+  },
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
@@ -38,7 +45,7 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     // Add file type restrictions if needed
     cb(null, true);
-  }
+  },
 });
 
 const assignmentUpload = multer({ dest: "uploads/assignments/" });

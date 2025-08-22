@@ -34,44 +34,34 @@ export const postAnnouncement = async (req, res) => {
   }
 };
 
-// Get announcements for a class
+// get announcement
 export const getAnnouncement = async (req, res) => {
+  const { classId } = req.params;
   try {
-    const class_id = req.params.classId;
-    console.log("Class ID received:", class_id);
-    const limit = parseInt(req.query.limit) || 10;
-
-    if (!class_id) {
-      return res.status(400).json({ message: "class_id required" });
+    const [result] = await db.query(
+      `
+SELECT 
+         a.announcement_id,
+         a.class_id,
+         a.posted_by,
+         a.message,
+         a.created_at,
+         u.name 
+       FROM announcement a
+       JOIN user u ON a.posted_by = u.user_id
+       WHERE a.class_id = ?
+       ORDER BY a.created_at DESC`,
+      [classId]
+    );
+    res.json(result);
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Assignent not found" });
     }
-
-    const sql = `
-      SELECT 
-        a.announcement_id,
-        u.name,
-        a.message,
-        a.created_at 
-      FROM announcement a
-      JOIN user u ON a.posted_by = u.user_id
-      WHERE a.class_id = ?
-      ORDER BY a.created_at DESC
-      LIMIT ?
-    `;
-
-    db.query(sql, [class_id, limit], (err, results) => {
-      if (err) {
-        console.error("DB error:", err);
-        return res.status(500).json({ message: "DB query failed" });
-      }
-      console.log("Announcements fetched:", results);
-      res.status(200).json(results || []);
-    });
   } catch (error) {
-    console.error("Unexpected error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("DB error : ", error);
+    res.status(500).json({ message: "Failed to fetch announcement" });
   }
 };
-
 // Delete announcement
 export const deleteAnnouncement = async (req, res) => {
   try {

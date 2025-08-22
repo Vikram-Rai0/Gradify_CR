@@ -90,61 +90,55 @@ export const getAssignUser = async (req, res) => {
 export const getStudentSubmission = async (req, res) => {
   try {
     const { assignId, studentId } = req.params;
-
-    // Get student details and latest submission
-    const [submission] = await db.query(
+    const [rows] = await db.query(
       `SELECT 
-        u.user_id,
-        u.name as student_name,
-        u.email as student_email,
-        asub.submission_id,
-        asub.attempt_no,
-        asub.content,
-        asub.file_url,
-        asub.submitted_at,
-        asub.status,
-        asub.grade,
-        a.title as assignment_title,
-        a.points as max_points
-       FROM assignmentsubmission asub
-       JOIN user u ON asub.student_id = u.user_id
-       JOIN assignment a ON asub.assign_id = a.assign_id
-       WHERE asub.assign_id = ? AND asub.student_id = ?
-       ORDER BY asub.attempt_no DESC
-       LIMIT 1`,
-      [assignId, studentId]
-    );
-
-    if (!submission.length) {
-      return res.status(404).json({ message: "Submission not found" });
-    }
-
-    // Get feedback history
-    const [feedbackHistory] = await db.query(
-      `SELECT 
-        af.feedback,
-        af.status,
-        af.created_at,
-        u.name as instructor_name
-       FROM assignment_feedback af
-       JOIN user u ON af.instructor_id = u.user_id
-       WHERE af.assign_id = ? AND af.student_id = ?
-       ORDER BY af.created_at DESC`,
-      [assignId, studentId]
-    );
-
-    // Get all submission attempts for this student
-    const [allAttempts] = await db.query(
-      `SELECT 
-        submission_id,
-        attempt_no,
-        submitted_at,
-        status,
-        grade
-       FROM assignmentsubmission
-       WHERE assign_id = ? AND student_id = ?
-       ORDER BY attempt_no ASC`,
-      [assignId, studentId]
+    u.user_id AS student_id,
+    u.name AS student_name,
+    u.email AS student_email,
+    asub.submission_id,
+    asub.attempt_no,
+    asub.content,
+    asub.file_url AS submissionFile,
+    asub.submitted_at AS lastSubmitted,
+    asub.status,
+    asub.grade AS points,
+    CASE 
+        WHEN asub.submission_id IS NULL THEN 'not_submitted'
+        ELSE asub.status
+    END AS submission_status,
+    af.feedback AS latest_feedback,
+    af.created_at AS feedback_date
+FROM classroom_members cm
+JOIN user u ON cm.user_id = u.user_id
+LEFT JOIN (
+    SELECT * FROM assignmentsubmission asub1
+    WHERE asub1.assign_id = ? 
+    AND asub1.attempt_no = (
+        SELECT MAX(attempt_no) 
+        FROM assignmentsubmission asub2
+        WHERE asub2.assign_id = asub1.assign_id
+        AND asub2.student_id = asub1.student_id
+    )
+) asub ON u.user_id = asub.student_id
+LEFT JOIN (
+    SELECT * FROM assignment_feedback af1
+    WHERE af1.assign_id = ?
+    AND af1.created_at = (
+        SELECT MAX(created_at)
+        FROM assignment_feedback af2
+        WHERE af2.assign_id = af1.assign_id
+        AND af2.student_id = af1.student_id
+    )
+) af ON u.user_id = af.student_id AND asub.submission_id = af.submission_id
+WHERE cm.class_id = ?  -- only students in this classroom
+ORDER BY 
+    CASE asub.status
+        WHEN 'pending' THEN 1
+        WHEN 'resubmit' THEN 2
+        WHEN 'accept' THEN 3
+        ELSE 4
+    END,
+    asub.submitted_at DESC;`[(assignId, assignId, classId)]
     );
 
     res.json({
