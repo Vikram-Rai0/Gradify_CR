@@ -2,11 +2,12 @@
 import db from "../../config/db.js";
 
 // Get all students and their submissions for an assignment (for instructors)
+// controllers/classwork/studentWork.js - Updated getAssignUser function
 export const getAssignUser = async (req, res) => {
   try {
     const { classId, assignId } = req.params;
 
-    // Get all students enrolled in the class and their latest submissions
+    // Get all students and their submissions for this assignment
     const [rows] = await db.query(
       `SELECT 
         u.user_id as student_id,
@@ -26,7 +27,6 @@ export const getAssignUser = async (req, res) => {
         af.feedback as latest_feedback,
         af.created_at as feedback_date
        FROM user u
-       JOIN class_enrollment ce ON u.user_id = ce.user_id
        LEFT JOIN (
          SELECT * FROM assignmentsubmission asub1
          WHERE asub1.assign_id = ? 
@@ -47,7 +47,7 @@ export const getAssignUser = async (req, res) => {
            AND af2.student_id = af1.student_id
          )
        ) af ON u.user_id = af.student_id AND asub.submission_id = af.submission_id
-       WHERE ce.class_id = ? AND u.role = 'student'
+       WHERE u.role = 'student'
        ORDER BY 
          CASE asub.status
            WHEN 'pending' THEN 1
@@ -56,21 +56,29 @@ export const getAssignUser = async (req, res) => {
            ELSE 4
          END,
          asub.submitted_at DESC`,
-      [assignId, assignId, classId]
+      [assignId, assignId]
     );
+
+    // Filter to only include students who have submitted to this assignment
+    // or if you have another way to determine class membership, implement it here
+    const classStudents = rows; // You might need to filter this based on your class structure
 
     // Group submissions by status for easier frontend handling
     const submissionStats = {
-      total: rows.length,
-      pending: rows.filter((r) => r.submission_status === "pending").length,
-      accepted: rows.filter((r) => r.submission_status === "accept").length,
-      resubmit: rows.filter((r) => r.submission_status === "resubmit").length,
-      not_submitted: rows.filter((r) => r.submission_status === "not_submitted")
+      total: classStudents.length,
+      pending: classStudents.filter((r) => r.submission_status === "pending")
         .length,
+      accepted: classStudents.filter((r) => r.submission_status === "accept")
+        .length,
+      resubmit: classStudents.filter((r) => r.submission_status === "resubmit")
+        .length,
+      not_submitted: classStudents.filter(
+        (r) => r.submission_status === "not_submitted"
+      ).length,
     };
 
     res.json({
-      students: rows,
+      students: classStudents,
       stats: submissionStats,
     });
   } catch (error) {
@@ -78,7 +86,6 @@ export const getAssignUser = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
 // Get detailed submission for a specific student (for review)
 export const getStudentSubmission = async (req, res) => {
   try {

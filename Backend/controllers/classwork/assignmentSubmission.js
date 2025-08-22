@@ -51,10 +51,10 @@ export const getMySubmission = async (req, res) => {
       [assignId, studentId]
     );
 
-    res.json({ 
-      submission, 
+    res.json({
+      submission,
       feedback,
-      canResubmit: submission.status === 'resubmit'
+      canResubmit: submission.status === "resubmit",
     });
   } catch (e) {
     console.error(e);
@@ -102,20 +102,25 @@ export const submitAssignment = async (req, res) => {
     );
 
     let attemptNo = 1;
-    
+
     if (existing.length) {
       const lastSubmission = existing[0];
-      
+
       // If last submission is accepted, don't allow new submissions
-      if (lastSubmission.status === 'accept') {
+      if (lastSubmission.status === "accept") {
         await conn.rollback();
-        return res.status(400).json({ message: "Assignment already accepted. No further submissions allowed." });
+        return res
+          .status(400)
+          .json({
+            message:
+              "Assignment already accepted. No further submissions allowed.",
+          });
       }
-      
+
       // If resubmit is required, increment attempt number
-      if (lastSubmission.status === 'resubmit') {
+      if (lastSubmission.status === "resubmit") {
         attemptNo = lastSubmission.attempt_no + 1;
-      } else if (lastSubmission.status === 'pending') {
+      } else if (lastSubmission.status === "pending") {
         // Update existing pending submission
         await conn.query(
           `UPDATE assignmentsubmission
@@ -151,6 +156,7 @@ export const submitAssignment = async (req, res) => {
 };
 
 // Unsubmit assignment (only if pending or resubmit)
+// Unsubmit assignment (only if pending or resubmit)
 export const unsubmitAssignment = async (req, res) => {
   const conn = await db.getConnection();
   try {
@@ -174,7 +180,8 @@ export const unsubmitAssignment = async (req, res) => {
     const due = assignment.due_date ? new Date(assignment.due_date) : null;
     if (due && now > due && !assignment.allow_late) {
       return res.status(400).json({
-        message: "Cannot unsubmit after due date (late submissions not allowed)",
+        message:
+          "Cannot unsubmit after due date (late submissions not allowed)",
       });
     }
 
@@ -188,19 +195,31 @@ export const unsubmitAssignment = async (req, res) => {
 
     if (!existing.length) {
       await conn.rollback();
-      return res.status(404).json({ message: "No submission found to unsubmit" });
+      return res
+        .status(404)
+        .json({ message: "No submission found to unsubmit" });
     }
+
+    const submissionId = existing[0].submission_id;
 
     // 4) Check if submission can be unsubmitted
-    if (existing[0].status === 'accept') {
+    if (existing[0].status === "accept") {
       await conn.rollback();
-      return res.status(400).json({ message: "Cannot unsubmit an accepted submission" });
+      return res
+        .status(400)
+        .json({ message: "Cannot unsubmit an accepted submission" });
     }
 
-    // 5) Delete latest submission
+    // 5) Delete feedback associated with this submission
+    await conn.query(
+      "DELETE FROM assignment_feedback WHERE submission_id = ?",
+      [submissionId]
+    );
+
+    // 6) Delete latest submission
     await conn.query(
       "DELETE FROM assignmentsubmission WHERE submission_id = ?",
-      [existing[0].submission_id]
+      [submissionId]
     );
 
     await conn.commit();

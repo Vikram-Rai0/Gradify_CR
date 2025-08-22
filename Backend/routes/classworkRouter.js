@@ -81,8 +81,9 @@ classworkRouter.delete(
 );
 
 // Instructor review routes
+// routes/classworkRouter.js - Updated route
 classworkRouter.get(
-  "/:classId/assignment/:assignId/assignUser",
+  "/assignment/:assignId/assignUser",
   verifyToken,
   getAssignUser
 );
