@@ -100,3 +100,40 @@ export const getClassroom = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch classrooms" });
   }
 };
+export const fetchClassroomMembers = async (req, res) => {
+  try {
+    const { class_id } = req.params;
+    if (!class_id)
+      return res.status(400).json({ message: "Class ID is required" });
+
+    // Fetch members
+    const [members] = await db.execute(
+      `SELECT cm.user_id, u.name
+       FROM classroom_members cm
+       LEFT JOIN user u ON cm.user_id = u.user_id
+       WHERE cm.class_id = ?`,
+      [class_id]
+    );
+
+    // Fetch classroom creator
+    const [creatorResult] = await db.execute(
+      `SELECT u.user_id, u.name
+       FROM classroom c
+       LEFT JOIN user u ON c.instructor_id = u.user_id
+       WHERE c.class_id = ?`,
+      [class_id]
+    );
+
+    const creator = creatorResult[0]; // there should be only one creator
+
+    if (!members || members.length === 0)
+      return res
+        .status(404)
+        .json({ message: "No members found for this class", creator });
+
+    res.status(200).json({ creator, members });
+  } catch (error) {
+    console.error("Error fetching classroom members:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
