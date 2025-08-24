@@ -46,7 +46,7 @@ const Navbar = ({ toggleSidebar }) => {
             onClick={() => navigate("/home")}
           >
             <SiGoogleclassroom className="text-2xl text-green-600" />
-            <span className="text-xl font-semibold text-blue-700">
+            <span className="text-xl font-semibold text-blue-800">
               Classroom
             </span>
           </div>
