@@ -4,7 +4,7 @@ import { SiGoogleclassroom } from "react-icons/si";
 import { IoIosAdd } from "react-icons/io";
 import LogoutUser from "./LogoutUser";
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 const Navbar = ({ toggleSidebar }) => {
   const [isOpen, setIsOpen] = useState(false);
   const popupRef = useRef(null);
@@ -88,9 +88,10 @@ const Navbar = ({ toggleSidebar }) => {
           </div>
 
 
-          <div className="h-10 w-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold cursor-pointer">
+          <Link to="dlayout">   <div className="h-10 w-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold cursor-pointer">
             U
           </div>
+          </Link>
         </div>
       </nav>
     </header>
