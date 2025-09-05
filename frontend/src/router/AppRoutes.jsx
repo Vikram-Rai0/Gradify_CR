@@ -28,7 +28,7 @@ import AssignmentUsers from "../components/assignment/StudentWork";
 import TeacherDashboard from "../components/Dashboard";
 import DLayout from "../layouts/DLayout";
 import DNavbar from "../components/dashboard/DNavbar";
-import DSidebar from "../components/dashboard/DSidebar";
+import DSidebar from "../components/dashboard/DSidebarL";
 const AppRoutes = () => {
     return (
         <Routes>
@@ -90,8 +90,8 @@ const AppRoutes = () => {
             />
             <Route path="/classroom/:classId/classwork/topic" element={<Topic />} />
 
-              <Route path = "dlayout" element={<DLayout />}>
-                 <Route index element={<TeacherDashboard />} /> 
+            <Route path="dlayout" element={<DLayout />}>
+                <Route index element={<TeacherDashboard />} />
 
             </Route>
         </Routes>

@@ -48,6 +48,7 @@ SELECT
          a.created_at,
          u.name 
        FROM announcement a
+       
        JOIN user u ON a.posted_by = u.user_id
        WHERE a.class_id = ?
        ORDER BY a.created_at DESC`,
