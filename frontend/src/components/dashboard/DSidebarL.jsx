@@ -14,7 +14,7 @@ const DSidebarL = ({ isOpen, toggle }) => {
                 <button onClick={toggle} aria-label="Toggle Sidebar">
                     <FaBars className="text-gray-600 text-lg" />
                 </button>
-                {isOpen && <h1 className="font-bold text-xl text-gray-700">GradifyClass</h1>}
+                <h1 className="font-bold text-xl text-gray-700">GradifyClass</h1>
             </div>
 
             {/* Menu Section Label */}
