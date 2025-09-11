@@ -25,7 +25,7 @@ import CreateClass from "../pages/classroom/CreateClass";
 import JoinClass from "../pages/classroom/joinClass";
 import GetSinglePageAssignment from "../components/assignment/GetSinglePageAssignment";
 import AssignmentUsers from "../components/assignment/StudentWork";
-import TeacherDashboard from "../components/Dashboard";
+import Dashboard from "../components/dashboard/Admin/Dashboard";
 import DLayout from "../layouts/DLayout";
 import DNavbar from "../components/dashboard/DNavbar";
 import DSidebar from "../components/dashboard/DSidebarL";
@@ -36,7 +36,6 @@ const AppRoutes = () => {
             <Route path="/signup" element={<UserForm />} />
             <Route path="/login" element={<UserForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/dashboard" element={<TeacherDashboard />} />
 
 
             <Route path="/create-class" element={<CreateClass />} />
@@ -91,7 +90,9 @@ const AppRoutes = () => {
             <Route path="/classroom/:classId/classwork/topic" element={<Topic />} />
 
             <Route path="dlayout" element={<DLayout />}>
-                <Route index element={<TeacherDashboard />} />
+                <Route index element={<Dashboard />} />
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="dpeople" element={< />} />
 
             </Route>
         </Routes>

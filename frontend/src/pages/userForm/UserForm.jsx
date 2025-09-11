@@ -151,6 +151,7 @@ const UserForm = () => {
                     <option value="Student">Student</option>
                     <option value="Teacher">Teacher</option>
                     <option value="Instructor">Instructor</option>
+                    <option value="Admin">Admin</option>
                   </select>
                 </div>
               </>

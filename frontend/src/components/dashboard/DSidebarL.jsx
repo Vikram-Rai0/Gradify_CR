@@ -5,6 +5,7 @@ import { SiGoogleclassroom } from "react-icons/si";
 import { IoIosPeople } from "react-icons/io";
 import { MdOutlineAssignment, MdSpaceDashboard } from "react-icons/md";
 import { LuMessageCircleMore } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 const DSidebarL = ({ isOpen, toggle }) => {
     return (
@@ -22,10 +23,12 @@ const DSidebarL = ({ isOpen, toggle }) => {
 
             {/* Menu Items */}
             <ul className="flex flex-col gap-2 mt-2 px-2">
-                <li className="flex items-center gap-3 p-2 cursor-pointer hover:bg-amber-300 rounded">
-                    <MdSpaceDashboard className="text-lg" />
-                    {isOpen && <span>Dashboard</span>}
-                </li>
+                <Link to="/dlayout/dashboard">
+                    <li className="flex items-center gap-3 p-2 cursor-pointer hover:bg-amber-300 rounded">
+                        <MdSpaceDashboard className="text-lg" />
+                        {isOpen && <span>Dashboard</span>}
+                    </li>
+                </Link>
                 <li className="flex items-center gap-3 p-2 cursor-pointer hover:bg-amber-300 rounded">
                     <SiGoogleclassroom className="text-lg" />
                     {isOpen && <span>Class</span>}
