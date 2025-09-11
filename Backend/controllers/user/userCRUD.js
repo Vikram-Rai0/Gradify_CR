@@ -11,6 +11,17 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
+// Total number of users 
+
+export const countUsers = async (req, res) => {
+  try {
+    const [total_user] = await db.query("SELECT Count(*) AS  total_users FROM  user");
+    res.status(200).json(total_user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // ======================== Get Single User (self or admin) ========================
 export const getUserById = async (req, res) => {
   const userId = Number(req.params.user_id);
