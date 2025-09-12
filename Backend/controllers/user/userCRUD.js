@@ -15,12 +15,46 @@ export const getAllUsers = async (req, res) => {
 
 export const countUsers = async (req, res) => {
   try {
-    const [total_user] = await db.query("SELECT Count(*) AS  total_users FROM  user");
-    res.status(200).json(total_user);
+    const [total_users] = await db.query("SELECT Count(*) AS  total_users FROM  user");
+    res.status(200).json(total_users);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const totalInstructor = async (req, res) => {
+  try {
+    const [total_instructors] = await db.query(
+      "SELECT COUNT(*) AS total_instructors FROM user WHERE role = 'Instructor'"
+    );
+    res.status(200).json(total_instructors);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const totalStudent = async (req, res) => {
+  try {
+    const [total_students] = await db.query(
+      "SELECT COUNT(*) AS total_students FROM user WHERE role = 'Student'"
+    );
+    res.status(200).json(total_students);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const totalSupervisor = async (req, res) => {
+  try {
+    const [total_supervisors] = await db.query(
+      "SELECT COUNT(*) AS total_supervisors FROM user WHERE role = 'Supervisor'"
+    );
+    res.status(200).json(total_supervisors);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 // ======================== Get Single User (self or admin) ========================
 export const getUserById = async (req, res) => {
