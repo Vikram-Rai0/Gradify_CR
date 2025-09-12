@@ -33,10 +33,13 @@ const DSidebarL = ({ isOpen, toggle }) => {
                     <SiGoogleclassroom className="text-lg" />
                     {isOpen && <span>Class</span>}
                 </li>
-                <li className="flex items-center gap-3 p-2 cursor-pointer hover:bg-amber-300 rounded">
-                    <IoIosPeople className="text-lg" />
-                    {isOpen && <span>People</span>}
-                </li>
+                <Link to="dpeople">
+                    <li className="flex items-center gap-3 p-2 cursor-pointer hover:bg-amber-300 rounded">
+                        <IoIosPeople className="text-lg" />
+                        {isOpen && <span>People</span>}
+                    </li>
+                </Link>
+
                 <li className="flex items-center gap-3 p-2 cursor-pointer hover:bg-amber-300 rounded">
                     <MdOutlineAssignment className="text-lg" />
                     {isOpen && <span>Assignment</span>}

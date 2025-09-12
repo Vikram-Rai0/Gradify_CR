@@ -29,6 +29,7 @@ import Dashboard from "../components/dashboard/Admin/Dashboard";
 import DLayout from "../layouts/DLayout";
 import DNavbar from "../components/dashboard/DNavbar";
 import DSidebar from "../components/dashboard/DSidebarL";
+import Dpeople from "../components/dashboard/Admin/Dpeople";
 const AppRoutes = () => {
     return (
         <Routes>
@@ -92,7 +93,7 @@ const AppRoutes = () => {
             <Route path="dlayout" element={<DLayout />}>
                 <Route index element={<Dashboard />} />
                   <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="dpeople" element={< />} />
+                  <Route path="dpeople" element={<Dpeople />} />
 
             </Route>
         </Routes>

@@ -36,4 +36,4 @@ const Dpeople = () => {
   );
 };
 
-export default People;
+export default Dpeople;
