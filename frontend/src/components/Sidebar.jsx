@@ -23,22 +23,38 @@ const Sidebar = ({ isSidebarLocked }) => {
     >
       <ul className="space-y-2 py-6">
         <Link to="/home" className="block">
-          <SidebarItem icon={<MdHome size={26} />} label="Home" expanded={expanded} />
+          <SidebarItem
+            icon={<MdHome size={26} />}
+            label="Home"
+            expanded={expanded}
+          />
         </Link>
         <Link to="/calender" className="block">
-          <SidebarItem icon={<FaRegCalendarAlt size={24} />} label="Calendar" expanded={expanded} />
+          <SidebarItem
+            icon={<FaRegCalendarAlt size={24} />}
+            label="Calendar"
+            expanded={expanded}
+          />
         </Link>
 
         <hr className="border-gray-300 mx-4" />
 
         <Link to="/teaching" className="block">
-          <SidebarItem icon={<FaChalkboardTeacher size={24} />} label="Teaching" expanded={expanded} />
+          <SidebarItem
+            icon={<FaChalkboardTeacher size={24} />}
+            label="Teaching"
+            expanded={expanded}
+          />
         </Link>
 
         <hr className="border-gray-300 mx-4" />
 
         <Link to="/settings" className="block">
-          <SidebarItem icon={<IoMdSettings size={24} />} label="Settings" expanded={expanded} />
+          <SidebarItem
+            icon={<IoMdSettings size={24} />}
+            label="Settings"
+            expanded={expanded}
+          />
         </Link>
       </ul>
     </aside>
@@ -48,9 +64,9 @@ const Sidebar = ({ isSidebarLocked }) => {
 const SidebarItem = ({ icon, label, expanded }) => (
   <li
     className={classNames(
-      "relative flex items-center gap-5 px-5 py-3 text-gray-700 rounded-l-3xl cursor-pointer transition-colors duration-300 hover:bg-[#7ba7cb] group/item select-none",
+      "relative flex items-center gap-5 px-5 py-3 text-gray-700  cursor-pointer transition-colors duration-300 hover:bg-[#84accc] group/item select-none",
       {
-        "bg-[#e6eff7] font-semibold text-[#E2EFFF]": expanded,
+        "bg-[#ebf1f6] font-semibold text-[#E2EFFF]": expanded,
         "hover:text-[#d8e9fe]": !expanded,
       }
     )}
@@ -70,7 +86,7 @@ const SidebarItem = ({ icon, label, expanded }) => (
 
     {/* Tooltip for collapsed mode */}
     {!expanded && (
-      <span className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1 text-sm bg-[#cee4fe] text-white rounded-md shadow-lg opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 z-50 whitespace-nowrap select-none">
+      <span className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1 text-sm bg-[#deecfe] text-white rounded-md shadow-lg opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 z-50 whitespace-nowrap select-none">
         {label}
       </span>
     )}
