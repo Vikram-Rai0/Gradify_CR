@@ -76,6 +76,11 @@ const CreateClass = () => {
                     <input type="text" name="section" value={data.section} onChange={handleChange} placeholder='Section' className='w-full h-12 pl-2 rounded-sm border-b-2 border-[#456882] bg-gray-50 focus:outline-none focus:ring-0' />
                     <input type="text" name="subject" value={data.subject} onChange={handleChange} placeholder='Subject' className='w-full h-12 pl-2 rounded-sm border-b-2 border-[#456882] bg-gray-50 focus:outline-none focus:ring-0' />
                     <input type="text" name="semester" value={data.semester} onChange={handleChange} placeholder='Semester' className='w-full h-12 pl-2 rounded-sm border-b-2 border-[#456882] bg-gray-50 focus:outline-none focus:ring-0' />
+                    <div className='flex items-center gap-4 '>
+
+                        <label htmlFor="" className='text-gray-600'>End_date:</label>
+                        <input type="date" name="end_date" value={data.end_date} onChange={handleChange} placeholder='end_date' className='w-1/2 h-12 pl-2 rounded-sm border-b-2 border-[#456882] bg-gray-50 focus:outline-none focus:ring-0' />
+                    </div>
                     <input type="text" name="invite_code" value={data.invite_code} onChange={handleChange} placeholder='Invite Code' className='w-full h-12 pl-2 rounded-sm border-b-2 border-[#456882] bg-gray-50 focus:outline-none focus:ring-0' />
 
                     <div className='flex justify-end gap-2'>
@@ -86,6 +91,7 @@ const CreateClass = () => {
                                 subject: "",
                                 section: "",
                                 semester: "",
+                                end_date: "",
                                 invite_code: ""
                             })}
                             className='rounded-md border border-red-500 hover:bg-red-500 bg-red-600 shadow px-4 py-2 text-white'
