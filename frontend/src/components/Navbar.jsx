@@ -1,10 +1,10 @@
+// src/components/Navbar.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { FaBars } from "react-icons/fa6";
 import { SiGoogleclassroom } from "react-icons/si";
 import { IoIosAdd } from "react-icons/io";
-import LogoutUser from "./LogoutUser";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 const Navbar = ({ toggleSidebar }) => {
   const [isOpen, setIsOpen] = useState(false);
   const popupRef = useRef(null);
@@ -37,10 +37,17 @@ const Navbar = ({ toggleSidebar }) => {
       <nav className="flex items-center justify-between h-16 px-6">
         {/* Left section */}
         <div className="flex items-center gap-4">
-          <FaBars
-            className="text-lg cursor-pointer text-gray-700 hover:text-blue-500 transition"
+          {/* hamburger */}
+          <button
+            aria-label="Toggle sidebar"
             onClick={toggleSidebar}
-          />
+            className="p-2 rounded-md hover:bg-gray-100 transition"
+          >
+            <FaBars className="text-lg" />
+          </button>
+
+
+
           <div
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate("/home")}
@@ -52,24 +59,24 @@ const Navbar = ({ toggleSidebar }) => {
           </div>
         </div>
 
-
+        {/* Right section */}
         <div className="flex items-center gap-6">
-          <LogoutUser />
 
 
           <div className="relative">
             <button
               onClick={toggleOpen}
               className="p-2 rounded-full hover:bg-gray-100 transition"
+              aria-haspopup="true"
+              aria-expanded={isOpen}
             >
               <IoIosAdd className="text-3xl text-gray-700" />
             </button>
 
-
             {isOpen && (
               <div
                 ref={popupRef}
-                className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-50 animate-fadeIn"
+                className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-50 transition-transform transform origin-top-right"
               >
                 <button
                   onClick={handleJoinClass}
@@ -87,10 +94,10 @@ const Navbar = ({ toggleSidebar }) => {
             )}
           </div>
 
-
-          <Link to="dlayout">   <div className="h-10 w-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold cursor-pointer">
-            U
-          </div>
+          <Link to="/dlayout">
+            <div className="h-10 w-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold cursor-pointer">
+              U
+            </div>
           </Link>
         </div>
       </nav>

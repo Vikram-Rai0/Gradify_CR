@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 import { Outlet } from "react-router-dom";
-import ClassNav from"../pages/classroom/ClassNav"
 
 const Layout = () => {
-  const [isSidebarLocked, setIsSidebarLocked] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const toggleSidebar = () => setIsSidebarLocked(prev => !prev);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar isSidebarLocked={isSidebarLocked} />
-        
+       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+
         <main className="flex-1 overflow-auto bg-gray-50">
-          <Outlet />
+          <div className="p-4">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
@@ -24,4 +25,3 @@ const Layout = () => {
 };
 
 export default Layout;
-

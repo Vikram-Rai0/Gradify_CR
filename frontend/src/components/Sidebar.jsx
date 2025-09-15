@@ -1,96 +1,80 @@
-import React, { useState } from "react";
-import { MdHome } from "react-icons/md";
-import { FaRegCalendarAlt, FaChalkboardTeacher } from "react-icons/fa";
-import { IoMdSettings } from "react-icons/io";
-import classNames from "classnames";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import LogoutUser from "./LogoutUser";
+import { Home, Calendar, Settings, LogOut, GraduationCap } from "lucide-react";
 
-const Sidebar = ({ isSidebarLocked }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const expanded = isSidebarLocked || isHovered;
+export default function Sidebar({ isOpen, setIsOpen }) {
+    const location = useLocation();
 
-  return (
-    <aside
-      className={classNames(
-        "group/sidebar bg-white min-h-screen border-r border-gray-300 transition-all duration-300 ease-in-out overflow-hidden shadow-lg",
-        {
-          "w-64 shadow-xl": expanded,
-          "w-20": !expanded,
+    const menuItems = [
+        { name: "Home", path: "/home", icon: <Home size={20} /> },
+        { name: "Calendar", path: "/calendar", icon: <Calendar size={20} /> },
+        { name: "Teaching", path: "/teaching", icon: <GraduationCap size={20} /> },
+        { name: "Settings", path: "/settings", icon: <Settings size={20} /> },
+    ];
+
+    const handleClick = () => {
+        if (!isOpen) {
+            setIsOpen(true); // expand sidebar on click when collapsed
         }
-      )}
-      onMouseEnter={() => !isSidebarLocked && setIsHovered(true)}
-      onMouseLeave={() => !isSidebarLocked && setIsHovered(false)}
-    >
-      <ul className="space-y-2 py-6">
-        <Link to="/home" className="block">
-          <SidebarItem
-            icon={<MdHome size={26} />}
-            label="Home"
-            expanded={expanded}
-          />
-        </Link>
-        <Link to="/calender" className="block">
-          <SidebarItem
-            icon={<FaRegCalendarAlt size={24} />}
-            label="Calendar"
-            expanded={expanded}
-          />
-        </Link>
+    };
 
-        <hr className="border-gray-300 mx-4" />
+    return (
+        <aside
+            className={`
+        h-screen bg-white shadow-md border-r border-gray-200
+        transition-all duration-300 ease-in-out
+        flex flex-col
+        ${isOpen ? "w-64" : "w-20"}
+      `}
+        >
+            {/* Header */}
+            <div className="p-4 flex border-b border-gray-100">
+                <h2
+                    className={`text-gray-600 font-bold transition-all duration-300 ${isOpen ? "text-2xl" : "text-xl"
+                        }`}
+                >
+                    {isOpen ? "Classroom" : "C"}
+                </h2>
+            </div>
 
-        <Link to="/teaching" className="block">
-          <SidebarItem
-            icon={<FaChalkboardTeacher size={24} />}
-            label="Teaching"
-            expanded={expanded}
-          />
-        </Link>
+            {/* Menu */}
+            <nav className="flex-1 px-2 pt-4 overflow-auto">
+                <ul className="space-y-1">
+                    {menuItems.map((item, idx) => {
+                        const isActive = location.pathname === item.path;
+                        return (
+                            <li key={idx}>
+                                <Link
+                                    to={item.path}
+                                    onClick={handleClick}
+                                    className={`
+                    relative flex items-center gap-3 p-3 rounded-lg
+                    transition-colors duration-200
+                    ${isActive
+                                            ? "bg-blue-100 text-blue-700 font-medium"
+                                            : "hover:bg-gray-100 text-gray-700"
+                                        }
+                  `}
+                                >
+                                    {item.icon}
+                                    {isOpen && <span>{item.name}</span>}
+                                </Link>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </nav>
 
-        <hr className="border-gray-300 mx-4" />
+            {/* Logout */}
+            <div className="p-3 border-t border-gray-200">
 
-        <Link to="/settings" className="block">
-          <SidebarItem
-            icon={<IoMdSettings size={24} />}
-            label="Settings"
-            expanded={expanded}
-          />
-        </Link>
-      </ul>
-    </aside>
-  );
-};
+                <div onClick={handleClick}
+                    className="flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
 
-const SidebarItem = ({ icon, label, expanded }) => (
-  <li
-    className={classNames(
-      "relative flex items-center gap-5 px-5 py-3 text-gray-700  cursor-pointer transition-colors duration-300 hover:bg-[#84accc] group/item select-none",
-      {
-        "bg-[#ebf1f6] font-semibold text-[#E2EFFF]": expanded,
-        "hover:text-[#d8e9fe]": !expanded,
-      }
-    )}
-  >
-    <span className="flex-shrink-0 text-gray-500">{icon}</span>
-    <span
-      className={classNames(
-        "whitespace-nowrap transition-opacity duration-300 pointer-events-none select-none",
-        {
-          "opacity-100": expanded,
-          "opacity-0": !expanded,
-        }
-      )}
-    >
-      {label}
-    </span>
-
-    {/* Tooltip for collapsed mode */}
-    {!expanded && (
-      <span className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1 text-sm bg-[#deecfe] text-white rounded-md shadow-lg opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 z-50 whitespace-nowrap select-none">
-        {label}
-      </span>
-    )}
-  </li>
-);
-
-export default Sidebar;
+                    {isOpen && <span className="font-medium"> <LogoutUser /></span>}
+                </div>
+            </div>
+        </aside>
+    );
+}
