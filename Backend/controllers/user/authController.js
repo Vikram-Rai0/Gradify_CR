@@ -7,7 +7,7 @@ export const userSignup = async (req, res) => {
   const { name, email, password, role } = req.body;
 
   if (!name || !email || !password || !role) {
-    return res.status(400)  .json({ error: "All fields are required" });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
@@ -67,8 +67,13 @@ export const userLogin = async (req, res) => {
 
     if (result.length === 0)
       return res.status(401).json({ message: "Invalid email or password!" });
-
     const user = result[0];
+
+    if (user.status === "inactive")
+      return res
+        .status(403)
+        .json({ message: "Your account is inactive. Please contact admin." });
+
     const storedPassword = user.password_hash;
 
     if (!storedPassword)

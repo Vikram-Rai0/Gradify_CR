@@ -58,10 +58,10 @@ export const databaseHealth = async (req, res) => {
       const allTableNames = allTables.map(r => r.table_name || r.TABLE_NAME);
 
       const myTables = [
-        "announcement","assignment","assignment_feedback","assignmentsubmission","calendarevent",
-        "class_enrollment","classroom","classroom_members","comment","enrollment",
-        "material","milestone","milestonesubmission","notification","project",
-        "projectfile","team","teammember","user"
+        "announcement", "assignment", "assignment_feedback", "assignmentsubmission", "calendarevent",
+        "class_enrollment", "classroom", "classroom_members", "comment", "enrollment",
+        "material", "milestone", "milestonesubmission", "notification", "project",
+        "projectfile", "team", "teammember", "user"
       ];
 
       const existingTables = allTableNames.filter(t => myTables.includes(t));

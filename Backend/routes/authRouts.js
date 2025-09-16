@@ -15,6 +15,7 @@ import {
   totalStudent,
   totalSupervisor,
   totalInstructor,
+  toggleUserStatus,
 } from "../controllers/user/userCRUD.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 
@@ -24,14 +25,15 @@ authrouter.post("/login", userLogin);
 authrouter.get("/logout", logoutUser);
 
 // Protected route - user info
-authrouter.get('/totalUserCount', verifyToken, countUsers)
-authrouter.get('/totalInstructorCount', verifyToken, totalInstructor)
-authrouter.get('/totalStudentCount', verifyToken, totalStudent)
-authrouter.get('/totalSupervisorCount', verifyToken, totalSupervisor)
+
+authrouter.get("/totalUserCount", verifyToken, countUsers);
+authrouter.get("/totalInstructorCount", verifyToken, totalInstructor);
+authrouter.get("/totalStudentCount", verifyToken, totalStudent);
+authrouter.get("/totalSupervisorCount", verifyToken, totalSupervisor);
 authrouter.get("/me", verifyToken, getCurrentUser);
 authrouter.get("/getallusers", verifyToken, isAdmin, getAllUsers); // Only admin can list all users
 authrouter.get("/:user_id", verifyToken, getUserById); // User can get self info, admin can get any
 authrouter.put("/:user_id", verifyToken, updateUser); // User can update self, admin can update any
 authrouter.delete("/:user_id", verifyToken, deleteUser); // User can delete self, admin can delete any
-
+authrouter.patch("/:user_id/toggleStatus", verifyToken, isAdmin, toggleUserStatus)
 export default authrouter;
