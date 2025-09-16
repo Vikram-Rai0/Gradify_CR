@@ -19,9 +19,11 @@ const DashboardContent = () => {
           "http://localhost:5000/api/classroom/countActiveClasses",
           { withCredentials: true }
         );
-
+        
         console.log(response.data);
         setActiveClass(response.data.active_classes);
+
+ 
 
       } catch (error) {
         console.error(error.response?.data || error.message);

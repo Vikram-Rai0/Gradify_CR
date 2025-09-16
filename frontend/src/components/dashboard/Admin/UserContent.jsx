@@ -14,6 +14,7 @@ const UsersContent = () => {
           { withCredentials: true }
         );
         setUsers(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -21,12 +22,28 @@ const UsersContent = () => {
     getUsers();
   }, []);
 
-
-
   // Toggle row actions
   const toggleRow = (userId) => {
     if (openRow === userId) setOpenRow(null);
     else setOpenRow(userId);
+  };
+
+  const toggleStatus = (clickUser) => {
+    axios
+      .patch(`http://localhost:5000/api/user/${clickUser.user_id}/toggleStatus`, {}, {
+        withCredentials: true
+      })
+      .then((res) => {
+        const updateUser = res.data;
+        setUsers(
+          users.map((u) =>
+            u.user_id === updateUser.user_id
+              ? { ...u, status: updateUser.status }
+              : u
+          )
+        );
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -45,16 +62,34 @@ const UsersContent = () => {
           <table className="min-w-full">
             <thead>
               <tr className="border-b border-gray-200 text-sm">
-                <th className="text-left py-3 px-4 font-medium text-gray-700">Name</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-700">Email</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-700">Role</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">
+                  Name
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">
+                  Email
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">
+                  Role
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">
+                  Status
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">
+                  Promote
+                </th>
+
+                <th className="text-left py-3 px-4 font-medium text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {users.length > 0 ? (
                 users.map((u) => (
-                  <tr key={u.user_id} className="border-b border-gray-100 text-sm">
+                  <tr
+                    key={u.user_id}
+                    className="border-b border-gray-100 text-sm"
+                  >
                     <td className="py-3 px-4">{u.name}</td>
                     <td className="py-3 px-4">{u.email}</td>
                     <td className="py-3 px-4">
@@ -63,8 +98,34 @@ const UsersContent = () => {
                       </span>
                     </td>
                     <td className="py-3 px-4 flex items-center gap-2">
+                      {u.status === "active" ? "🟢 Active" : "🔴 Inactive"}
+                    </td>
+
+                    <td className="py-3 px-4">
+                      <label className="inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
+                          checked={u.status === "active"}
+                          onChange={() => toggleStatus(u)}
+                        />
+                        <input type="checkbox" className="sr-only peer" />
+                        <div className="w-7 h-3 border-none bg-gray-300 rounded-full peer-checked:bg-green-400 relative
+    after:content-[''] after:absolute after:top-0.5 after:left-0.5
+    after:bg-white after:border-none after:rounded-full after:h-2 after:w-2 after:transition-all
+    peer-checked:after:translate-x-4">
+                        </div>
+
+                      </label>
+                    </td>
+
+
+                    <td className="py-3 px-4 flex items-center gap-2">
                       {/* Dots icon to toggle actions */}
-                      <button onClick={() => toggleRow(u.user_id)} className="cursor-pointer">
+                      <button
+                        onClick={() => toggleRow(u.user_id)}
+                        className="cursor-pointer"
+                      >
                         <HiOutlineDotsHorizontal />
                       </button>
 
