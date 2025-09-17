@@ -1,6 +1,27 @@
 import db from "../../config/db.js";
 import bcrypt from "bcrypt";
 
+// ======================== Get Logged-In User ========================
+export const getCurrentUser = async (req, res) => {
+  const userId = req.user?.id; // Use user id from middleware
+
+  if (!userId) return res.status(401).json({ error: "Not authenticated" });
+
+  try {
+    const [result] = await db.query(
+      "SELECT user_id, name, email, role FROM user WHERE user_id = ?",
+      [userId]
+    );
+
+    if (result.length === 0)
+      return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json(result[0]);
+  } catch (err) {
+    console.error("User fetch error:", err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 // ======================== Get All Users (admin only) ========================
 export const getAllUsers = async (req, res) => {
   try {
@@ -24,10 +45,10 @@ export const countUsers = async (req, res) => {
   }
 };
 
-
 export const totalInstructor = async (req, res) => {
   try {
-    const [total_instructor] = await db.query("SELECT COUNT(*) AS total_instructor FROM user WHERE role = 'Instructor'"
+    const [total_instructor] = await db.query(
+      "SELECT COUNT(*) AS total_instructor FROM user WHERE role = 'Instructor'"
     );
     res.status(200).json(total_instructor);
   } catch (err) {
@@ -57,7 +78,6 @@ export const totalSupervisor = async (req, res) => {
   }
 };
 
-
 // ======================== Get Single User (self or admin) ========================
 export const getUserById = async (req, res) => {
   const userId = Number(req.params.user_id);
@@ -74,7 +94,8 @@ export const getUserById = async (req, res) => {
       [userId]
     );
 
-    if (result.length === 0) return res.status(404).json({ error: "User not found" });
+    if (result.length === 0)
+      return res.status(404).json({ error: "User not found" });
 
     res.status(200).json(result[0]);
   } catch (err) {
@@ -95,7 +116,9 @@ export const updateUser = async (req, res) => {
   const { name, role, email, password } = req.body;
 
   try {
-    const password_hash = password ? await bcrypt.hash(password, 10) : undefined;
+    const password_hash = password
+      ? await bcrypt.hash(password, 10)
+      : undefined;
 
     // Build update query dynamically to avoid setting password_hash to undefined
     let query = "UPDATE user SET name = ?, role = ?, email = ?";
@@ -110,12 +133,12 @@ export const updateUser = async (req, res) => {
 
     const [result] = await db.query(query, params);
 
-    if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ error: "User not found" });
 
     res.status(200).json({ message: "User updated" });
 
-    // update user Status  
-
+    // update user Status
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -132,9 +155,12 @@ export const deleteUser = async (req, res) => {
   }
 
   try {
-    const [result] = await db.query("DELETE FROM user WHERE user_id = ?", [userId]);
+    const [result] = await db.query("DELETE FROM user WHERE user_id = ?", [
+      userId,
+    ]);
 
-    if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ error: "User not found" });
 
     res.status(200).json({ message: "User deleted" });
   } catch (err) {
@@ -142,18 +168,23 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-//Toggle user status 
+//Toggle user status
 export const toggleUserStatus = async (req, res) => {
   const { user_id } = req.params;
 
-  //get current status 
-  const [user] = await db.query("SELECT status FROM user WHERE user_id = ?", [user_id]);
+  //get current status
+  const [user] = await db.query("SELECT status FROM user WHERE user_id = ?", [
+    user_id,
+  ]);
   if (!user.length) return res.status(404).json({ message: "User Not found" });
 
   const currentStatus = user[0].status;
-  const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+  const newStatus = currentStatus === "active" ? "inactive" : "active";
 
   //update Status
-  await db.query("UPDATE user SET  status = ? WHERE user_id = ?", [newStatus, user_id])
+  await db.query("UPDATE user SET  status = ? WHERE user_id = ?", [
+    newStatus,
+    user_id,
+  ]);
   res.json({ message: `user Status updated to ${newStatus}` });
-}
+};

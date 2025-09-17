@@ -7,6 +7,8 @@ import classRoomRouter from "./routes/classRoomRoutes.js";
 import announceRouter from "./routes/announcementRouter.js";
 import classworkRouter from "./routes/classworkRouter.js";
 import { resourceStatusRouter } from "./routes/storageStatusRouter.js";
+import authRoutes from "./controllers/auth.js";
+import userRouter from "./routes/userRoute.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,7 +30,8 @@ app.get("/", (req, res) => {
 
 // Mount user routes
 app.use("/api/system", resourceStatusRouter)
-app.use("/api/user", authrouter);
+app.use("/api/auth",authRoutes)
+app.use("/api/user", userRouter);
 app.use("/api/announcement", announceRouter);
 app.use("/api/classroom", classRoomRouter);
 app.use("/api/classwork", classworkRouter);

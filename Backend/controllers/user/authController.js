@@ -110,27 +110,7 @@ export const userLogin = async (req, res) => {
   }
 };
 
-// ======================== Get Logged-In User ========================
-export const getCurrentUser = async (req, res) => {
-  const userId = req.user?.id; // Use user id from middleware
 
-  if (!userId) return res.status(401).json({ error: "Not authenticated" });
-
-  try {
-    const [result] = await db.query(
-      "SELECT user_id, name, email, role FROM user WHERE user_id = ?",
-      [userId]
-    );
-
-    if (result.length === 0)
-      return res.status(404).json({ message: "User not found" });
-
-    res.status(200).json(result[0]);
-  } catch (err) {
-    console.error("User fetch error:", err.message);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
 
 // ======================== Logout ========================
 export const logoutUser = (req, res) => {

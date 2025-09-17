@@ -15,8 +15,8 @@ export const createroom = async (req, res) => {
 
   try {
     const [userRows] = await db.execute(
-      "SELECT * FROM user WHERE user_id = ? AND role IN (?, ?, ?)",
-      [req.user.id, "instructor", "teacher", "student"]
+      "SELECT * FROM user WHERE user_id = ? AND role IN (?, ?, ?,?)",
+      [req.user.id, "Student", "Instructor", "Student", "Admin"]
     );
 
     if (userRows.length === 0) {

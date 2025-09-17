@@ -54,7 +54,7 @@ SELECT
        ORDER BY a.created_at DESC`,
       [classId]
     );
-    res.json(result);
+   return res.json(result);
     if (result.length === 0) {
       return res.status(404).json({ message: "Assignent not found" });
     }
