@@ -39,12 +39,12 @@ const Announcement = forwardRef(
       axios
         .get("http://localhost:5000/api/user/me", { withCredentials: true })
         .then((res) => {
-          console.log("User data:", res.data);
           setUserId(res.data.user_id);
 
         })
         .catch((err) => {
           console.error("Failed to fetch current user:", err);
+          setUserId(null); // user not logged in
         });
 
       axios
@@ -110,63 +110,45 @@ const Announcement = forwardRef(
     };
 
     const handlePost = async () => {
-      if (!userId) {
-        alert("User not logged in.");
-        return;
-      }
+      if (!userId) return alert("User not logged in");
 
       const htmlContent = editorRef.current?.innerHTML;
       const plainText = editorRef.current?.innerText;
 
       if (!plainText.trim() || selectedClassId.length === 0) {
-        alert("Please select at least one class and write a message.");
-        return;
+        return alert("Please select at least one class and write a message.");
       }
 
-      try {
-        const postPromises = selectedClassId.map((classId) =>
-          axios.post("http://localhost:5000/api/announcement/postannouncement",
-            {
-              class_id: classId,
-              message: htmlContent,
-            }, { withCredentials: true })
-        );
-        // Reset state
-        editorRef.current.innerHTML = "";
-        setSelectedClassId([]);
-        setSelectAll(false);
+      // Reset UI immediately
+      editorRef.current.innerHTML = "";
+      setSelectedClassId([]);
+      setSelectAll(false);
+      closeEditor?.();
 
-        // Hide the editor
-        closeEditor?.();
-        const responses = await Promise.all(postPromises);
-
-        responses.forEach((response) => {
-          if (response.status === 200 || response.status === 201) {
+      // Fire all requests without blocking UI
+      selectedClassId.forEach((classId) => {
+        axios.post("http://localhost:5000/api/announcement/postannouncement", {
+          class_id: classId,
+          message: htmlContent,
+        }, { withCredentials: true })
+          .then(res => {
             onNewPost?.({
-              announcement_id: response.data.insertId || Date.now(),
+              announcement_id: res.data.insertId || Date.now(),
               posted_by: userId,
               message: htmlContent,
-              class_id: selectedClassId,
+              class_id: classId,
               date: new Date().toLocaleDateString(),
-              time: new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
+              time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             });
-
-          }
-        }
-        );
-
-
-
-      } catch (error) {
-        console.error("Error posting announcement:", error);
-      }
+          })
+          .catch(err => console.error("Error posting announcement:", err));
+      });
     };
 
 
+
     // get announcement 
+
 
     return (
       <div className="p-4 bg-white rounded shadow w-full max-w-3xl mx-auto mb-4 relative">
