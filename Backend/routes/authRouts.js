@@ -5,7 +5,7 @@ import {
   logoutUser,
 } from "../controllers/user/authController.js";
 
-
+// auth router
 const authrouter = express.Router();
 authrouter.post("/signup", userSignup);
 authrouter.post("/login", userLogin);
