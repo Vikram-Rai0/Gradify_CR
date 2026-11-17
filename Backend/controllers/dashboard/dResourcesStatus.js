@@ -15,9 +15,10 @@ function formatBytes(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 
-// Example placeholder for auth middleware -- implement properly in your app
 export const checkAdmin = (req, res, next) => {
-  // if (!req.user || !req.user.isAdmin) return res.status(403).json({ error: 'Forbidden' });
+  if (req.user?.role !== "Admin") {
+    return res.status(403).json({ error: "Forbidden" });
+  }
   return next();
 };
 
