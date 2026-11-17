@@ -69,6 +69,10 @@ export const submitAssignment = async (req, res) => {
     const { classId, assignId } = req.params;
     const studentId = req.user.id;
     const { comment } = req.body;
+    if (req.user?.role && req.user.role !== "Student" && req.user.role !== "Admin") {
+      return res.status(403).json({ message: "Only students can submit assignments" });
+    }
+
     const fileUrl =
       req.files && req.files.length
         ? `/uploads/submissions/${req.files[0].filename}`
@@ -175,6 +179,9 @@ export const unsubmitAssignment = async (req, res) => {
 
     const assignment = aRows[0];
 
+
+
+
     // 2) Check late submission rules
     const now = new Date();
     const due = assignment.due_date ? new Date(assignment.due_date) : null;
@@ -236,3 +243,4 @@ export const unsubmitAssignment = async (req, res) => {
     conn.release();
   }
 };
+
