@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { ADMIN } from "../utils/roles.js";
 
 export const verifyToken = (req, res, next) => {
   const token = req.cookies.token;
@@ -7,14 +8,17 @@ export const verifyToken = (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized. Token missing." });
   }
 
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    return res.status(500).json({ error: "Server authentication is not configured." });
+  }
+
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
+    const decoded = jwt.verify(token, secret);
     req.user = {
       id: decoded.id,
       role: decoded.role,
-    }; // Now available in any controller as req.user
-
+    };
     next();
   } catch (err) {
     return res.status(403).json({ error: "Invalid or expired token." });
@@ -22,7 +26,7 @@ export const verifyToken = (req, res, next) => {
 };
 
 export const isAdmin = (req, res, next) => {
-  if (req.user?.role !== "Admin") {
+  if (req.user?.role !== ADMIN) {
     return res.status(403).json({ error: "Access denied" });
   }
   next();
