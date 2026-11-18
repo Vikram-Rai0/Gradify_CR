@@ -1,5 +1,6 @@
 import express from "express";
 import { databaseHealth } from "../controllers/dashboard/dResourcesStatus.js";
-export const resourceStatusRouter = express.Router();
+import { isAdmin, verifyToken } from "../middlewares/authMiddleware.js";
 
-resourceStatusRouter.get("/db-health", databaseHealth)
+export const resourceStatusRouter = express.Router();
+resourceStatusRouter.get("/db-health", verifyToken, isAdmin, databaseHealth);
