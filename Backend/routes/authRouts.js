@@ -3,13 +3,16 @@ import {
   userSignup,
   userLogin,
   logoutUser,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/user/authController.js";
+import { verifyToken } from "../middlewares/authMiddleware.js";
 
-// auth router
 const authrouter = express.Router();
 authrouter.post("/signup", userSignup);
 authrouter.post("/login", userLogin);
-authrouter.get("/logout", logoutUser);
-
+authrouter.post("/forgot-password", forgotPassword);
+authrouter.post("/reset-password", resetPassword);
+authrouter.get("/logout", verifyToken, logoutUser);
 
 export default authrouter;
