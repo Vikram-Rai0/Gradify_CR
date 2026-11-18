@@ -2,34 +2,22 @@ import express from "express";
 import {
   postAnnouncement,
   getAnnouncement,
+  deleteAnnouncement,
+  updateAnnouncement,
 } from "../controllers/announcement.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
+import { ensureClassMember } from "../middlewares/classroomAccess.js";
+
 const announceRouter = express.Router();
 
-announceRouter.post(
-  "/postannouncement",
-  verifyToken,
-  (req, res, next) => {
-    console.log("Announcement POST request received");
-    next();
-  },
-  postAnnouncement
-);
-// announceRouter.get("/announcements/:class_id", verifyToken, (req, res, next) => {
-//   console.log(`Fetching announcements for class: ${req.params.class_id}`);
-//   next();
-// }, getAnnouncement);
-
-// In server/routes/announcement.js
+announceRouter.post("/postannouncement", verifyToken, ensureClassMember, postAnnouncement);
 announceRouter.get(
   "/getannouncement/:classId",
   verifyToken,
-  (req, res, next) => {
-    console.log(`Fetching announcements for class: ${req.params.classId}`);
-    next();
-  },
+  ensureClassMember,
   getAnnouncement
 );
-
+announceRouter.put("/:id", verifyToken, updateAnnouncement);
+announceRouter.delete("/:id", verifyToken, deleteAnnouncement);
 
 export default announceRouter;
