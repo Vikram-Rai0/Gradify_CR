@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import api, { API_BASE } from "../../api/client";
 import { useParams } from "react-router-dom";
 import { Clock, CheckCircle, RefreshCw, FileText, MessageSquare } from "lucide-react";
 import GetSinglePageAssignment from "./GetSinglePageAssignment";
@@ -17,9 +17,8 @@ const AssignmentUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/classwork/assignment/${assignId}/assignUser`,
-        { withCredentials: true }
+      const res = await api.get(
+        `/api/classwork/assignment/${assignId}/assignUser`
       );
 
       setStudentsData(res.data);
@@ -79,8 +78,8 @@ const AssignmentUsers = () => {
     setProcessing((prev) => ({ ...prev, [studentId]: true }));
 
     try {
-      await axios.post(
-        `http://localhost:5000/api/classwork/${classId}/assignment/${assignId}/action`,
+      await api.post(
+        `/api/classwork/${classId}/assignment/${assignId}/action`,
         {
           studentId,
           action,
@@ -256,7 +255,7 @@ const AssignmentUsers = () => {
                     <div className="flex justify-between gap-2 mt-2">
                       {student.submissionFile ? (
                         <a
-                          href={`http://localhost:5000${student.submissionFile}`}
+                          href={`${API_BASE}${student.submissionFile}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 text-xs hover:underline flex-1 text-center rounded border border-gray-200 py-1 flex items-center justify-center gap-1"
