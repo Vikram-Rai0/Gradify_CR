@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import DOMPurify from "dompurify";
+import api from "../../api/client";
 
 const GetAnnouncement = ({ classId, reload, renderItem, onDataFetched }) => {
   const [announcements, setAnnouncements] = useState([]);
@@ -13,12 +14,9 @@ const GetAnnouncement = ({ classId, reload, renderItem, onDataFetched }) => {
         setError("");
 
         // Fixed URL to match your backend route
-        const res = await axios.get(
-          `http://localhost:5000/api/announcement/getannouncement/${classId}?limit=10`,
-          { withCredentials: true }
+        const res = await api.get(
+          `/api/announcement/getannouncement/${classId}?limit=10`
         );
-
-        console.log("Announcements response:", res.data);
 
         // Ensure we always get an array
         const fetchedAnnouncements = Array.isArray(res.data) ? res.data : [];
@@ -90,7 +88,7 @@ const GetAnnouncement = ({ classId, reload, renderItem, onDataFetched }) => {
               </div> */}
               <div
                 className="text-gray-700"
-                dangerouslySetInnerHTML={{ __html: announcement.message }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(announcement.message || "") }}
               />
             </div>
           );
