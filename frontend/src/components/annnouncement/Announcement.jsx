@@ -5,7 +5,7 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import axios from "axios";
+import api from "../../api/client";
 import {
   FaBold,
   FaItalic,
@@ -21,7 +21,7 @@ import {
 
 const Announcement = forwardRef(
   (
-    { onNewPost, closeEditor, editorOnly = false, hideFooterButtons = false, currentClassId = null },
+    { onNewPost, closeEditor, editorOnly = false, hideFooterButtons = false, currentClassId = null, classId = null },
     ref
   ) => {
     const editorRef = useRef(null);
@@ -36,30 +36,22 @@ const Announcement = forwardRef(
     // Fetch user and class list
     useEffect(() => {
 
-      axios
-        .get("http://localhost:5000/api/user/me", { withCredentials: true })
+      api
+        .get("/api/user/me")
         .then((res) => {
           setUserId(res.data.user_id);
-
         })
-        .catch((err) => {
-          console.error("Failed to fetch current user:", err);
-          setUserId(null); // user not logged in
-        });
+        .catch(() => setUserId(null));
 
-      axios
-        .get("http://localhost:5000/api/classroom/getClassroom", { withCredentials: true })
+      api
+        .get("/api/classroom/getclassroom")
         .then((res) => {
-          console.log("Classroom Data", res.data);
           setClassList(res.data);
-        }
-        )
-
-
+          const initial = currentClassId || classId;
+          if (initial) setSelectedClassId([Number(initial) || initial]);
+        })
         .catch((err) => console.error("Failed to fetch class list", err));
-
-
-    }, [currentClassId]);
+    }, [currentClassId, classId]);
 
     // handleclickOutSide for drop down 
     useEffect(() => {
@@ -127,10 +119,10 @@ const Announcement = forwardRef(
 
       // Fire all requests without blocking UI
       selectedClassId.forEach((classId) => {
-        axios.post("http://localhost:5000/api/announcement/postannouncement", {
+        api.post("/api/announcement/postannouncement", {
           class_id: classId,
           message: htmlContent,
-        }, { withCredentials: true })
+        })
           .then(res => {
             onNewPost?.({
               announcement_id: res.data.insertId || Date.now(),
