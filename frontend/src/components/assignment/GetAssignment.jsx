@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/client";
 import { Link, useParams } from "react-router-dom";
 import { MdOutlineAssignment } from "react-icons/md";
 
@@ -15,10 +15,7 @@ const GetAssignment = ({ classId, renderItem, onDataFetched }) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/user/me`, {
-                    withCredentials: true,
-                });
-                console.log(res.data);
+                const res = await api.get(`/api/user/me`);
                 setUser(res.data);
             } catch (err) {
                 console.error("Failed to fetch user:", err);
@@ -34,14 +31,10 @@ const GetAssignment = ({ classId, renderItem, onDataFetched }) => {
         const fetchAssignments = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get(
-                    `http://localhost:5000/api/classwork/${effectiveClassId}/getAssignment?limit=20`,
-                    {
-                        withCredentials: true,
-                    }
+                const res = await api.get(
+                    `/api/classwork/${effectiveClassId}/getAssignment?limit=20`
                 );
 
-                console.log(res.data);
                 const fetchedAssignments = Array.isArray(res.data) ? res.data : [];
                 setAssignments(fetchedAssignments);
                 
@@ -95,7 +88,7 @@ const GetAssignment = ({ classId, renderItem, onDataFetched }) => {
 
                         // Default rendering
                         const linkPath =
-                            user?.role === "Instructor"
+                            ["Instructor", "Admin", "Supervisor"].includes(user?.role)
                                 ? `/classroom/${effectiveClassId}/assignment/${a.assign_id}/studentWork`
                                 : `/classroom/${effectiveClassId}/assignment/${a.assign_id}`;
                         
