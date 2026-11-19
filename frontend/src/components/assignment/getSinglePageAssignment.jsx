@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import DOMPurify from "dompurify";
+import api, { API_BASE } from "../../api/client";
 import { useParams, useNavigate } from "react-router-dom";
 import { Calendar, Clock, CheckCircle, Upload, MessageSquare, Trash2, AlertCircle, FileText, RefreshCw } from "lucide-react";
 
@@ -22,20 +23,17 @@ const GetSinglePageAssignment = ({ showSubmission = true }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const userRes = await axios.get("http://localhost:5000/api/user/me", { withCredentials: true });
+        const userRes = await api.get("/api/user/me");
         setUser(userRes.data);
 
-        const assignRes = await axios.get(
-          `http://localhost:5000/api/classwork/${classId}/getAssignment/${assignId}`,
-          { withCredentials: true }
+        const assignRes = await api.get(
+          `/api/classwork/${classId}/getAssignment/${assignId}`
         );
         setAssignment(assignRes.data);
 
-        // fetch student submission if student
         if (userRes.data.role === "Student") {
-          const subRes = await axios.get(
-            `http://localhost:5000/api/classwork/${classId}/assignment/${assignId}/getmySubmission`,
-            { withCredentials: true }
+          const subRes = await api.get(
+            `/api/classwork/${classId}/assignment/${assignId}/getmySubmission`
           );
           setSubmissionData(subRes.data);
         }
@@ -61,20 +59,17 @@ const GetSinglePageAssignment = ({ showSubmission = true }) => {
     formData.append("comment", comment);
 
     try {
-      await axios.post(
-        `http://localhost:5000/api/classwork/${classId}/submitAssignment/${assignId}`,
-        formData,
-        { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
+      await api.post(
+        `/api/classwork/${classId}/submitAssignment/${assignId}`,
+        formData
       );
 
       setSuccess("Assignment submitted successfully!");
       setFile(null);
       setComment("");
 
-      // Refresh submission data
-      const subRes = await axios.get(
-        `http://localhost:5000/api/classwork/${classId}/assignment/${assignId}/getmySubmission`,
-        { withCredentials: true }
+      const subRes = await api.get(
+        `/api/classwork/${classId}/assignment/${assignId}/getmySubmission`
       );
       setSubmissionData(subRes.data);
 
@@ -91,9 +86,8 @@ const GetSinglePageAssignment = ({ showSubmission = true }) => {
 
     setUnsubmitting(true);
     try {
-      await axios.delete(
-        `http://localhost:5000/api/classwork/${classId}/unsubmitAssignment/${assignId}`,
-        { withCredentials: true }
+      await api.delete(
+        `/api/classwork/${classId}/unsubmitAssignment/${assignId}`
       );
       setSuccess("Assignment unsubmitted successfully!");
       setSubmissionData({ submission: null, feedback: [], canResubmit: false });
@@ -155,7 +149,28 @@ const GetSinglePageAssignment = ({ showSubmission = true }) => {
         <div className="flex items-start justify-between border-b pb-4 mb-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{assignment.title}</h1>
-            <p className="text-gray-600">{assignment.description}</p>
+            <div
+              className="text-gray-600 prose max-w-none"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(assignment.description || ""),
+              }}
+            />
+            {Array.isArray(assignment.attachments) && assignment.attachments.length > 0 && (
+              <ul className="mt-4 space-y-2">
+                {assignment.attachments.map((file) => (
+                  <li key={file.id}>
+                    <a
+                      className="text-blue-600 text-sm hover:underline"
+                      href={`${API_BASE}${file.filepath}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {file.filename}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <span className="text-red-600 px-4 py-1.5 rounded-full text-sm font-semibold">
             Due: {new Date(assignment.due_date).toLocaleDateString()}
@@ -263,7 +278,7 @@ const GetSinglePageAssignment = ({ showSubmission = true }) => {
                   <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                     <FileText className="w-5 h-5 text-gray-600" />
                     <a
-                      href={`http://localhost:5000${submission.file_url}`}
+                      href={`${API_BASE}${submission.file_url}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 text-sm hover:underline font-medium"
